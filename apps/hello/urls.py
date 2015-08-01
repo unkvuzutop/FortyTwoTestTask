@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import views
 
@@ -12,3 +13,5 @@ urlpatterns = [
     # url(r'^signout/$', views.sign_out, name='sign_out'),
     # url(r'^like/(?P<product_id>[0-9]+)$', views.like_product, name='like')
 ]
+
+urlpatterns += staticfiles_urlpatterns()
