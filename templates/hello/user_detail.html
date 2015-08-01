@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+{{ user.name }} <br>
+  <br>  {{ user.last_name }}
+   <br> {{ user.date_ob_birth }}
+   <br> {{ user.bio }}
+<br>
+    Contacts:<br>
+    <br>{{ user.email }}
+<br>    {{ user.jabber }}
+   <br> {{ user.skype }}
+   <br> {{ user.other.contacts }}
+{% endblock content %}
