@@ -29,3 +29,4 @@ class TemplateTests(TestCase):
         self.assertIn('jabber', user.__dict__)
         self.assertIn('skype', user.__dict__)
         self.assertIn('other_contacts', user.__dict__)
+
