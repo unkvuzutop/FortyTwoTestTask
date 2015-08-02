@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block footer %}
+    <div class="container">
+        <div class="nav col-sm-1">
+            <a href="{% url 'hello:home' %}">Home</a>
+        </div>
+        <div class="nav> col-sm-1">
+            <a href="{% url 'hello:requests' %}">Request</a>
+        </div>
+    </div>
+    {% endblock footer %}

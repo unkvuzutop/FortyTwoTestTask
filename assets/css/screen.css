@@ -16,3 +16,11 @@
 .cleaned {
     height: 25px;
 }
+
+.readed {
+    color: black;
+}
+
+.unreaded {
+    color: red;
+}
