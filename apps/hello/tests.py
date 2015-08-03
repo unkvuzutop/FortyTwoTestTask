@@ -7,6 +7,21 @@ from fortytwo_test_task import settings
 
 
 class TemplateTests(TestCase):
+    def test_email_in_settings(self):
+        """
+        check ADMIN_EMAIL is present in settings and it's not empty
+        """
+        self.assertIn('ADMIN_EMAIL', settings.__dict__)
+        self.assertNotEqual(settings.ADMIN_EMAIL, '')
+
+    def test_user_with_email(self):
+        """
+        check user with ADMIN_EMAIL is unique
+        """
+        user = User.objects.filter(email=settings.ADMIN_EMAIL).count()
+        self.assertEqual(user, 1)
+        self.assertNotEqual(user, 0)
+
     def test_home_view(self):
         """
         check access for home page
