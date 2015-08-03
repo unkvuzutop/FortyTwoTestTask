@@ -20,6 +20,7 @@ class TemplateTests(TestCase):
         """
         user = User.objects.filter(email=settings.ADMIN_EMAIL).count()
         self.assertEqual(user, 1)
+        self.assertNotEqual(user, 0)
 
     def test_home_view(self):
         """
