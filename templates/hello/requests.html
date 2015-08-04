@@ -36,6 +36,8 @@
                         {{ request.host }}
                     </td>
                 </tr>
+            {% empty %}
+                <tr>Haven't requests yet</tr>
             {% endfor %}
         </tbody>
     </table>

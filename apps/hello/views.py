@@ -29,30 +29,39 @@ def request_list(request):
 
 @csrf_protect
 def ajax_update(request):
-    viewed_request_id = request.POST['viewed']
+    if request.is_ajax() and request.method == 'POST':
+        viewed_request_id = request.POST['viewed']
+        try:
+            result = RequestHistory.objects\
+                .filter(id__in=viewed_request_id.split(','))\
+                .update(is_viewed=True)
+            if not result:
+                    return HttpResponse('{"response": "Nothing to update"}',
+                                        content_type='application/json')
+        except Exception as e:
+            logging.info('can\'t update object')
+            logging.error(e)
+            return HttpResponse('{"response": "False"}',
+                                content_type='application/json')
 
-    try:
-        RequestHistory.objects\
-            .filter(id__in=viewed_request_id.split(','))\
-            .update(is_viewed=True)
-    except Exception as e:
-        logging.error(e)
-        return HttpResponse('{"response": "False"}',
+        return HttpResponse('{"response": "OK"}',
                             content_type='application/json')
-
-    return HttpResponse('{"response": "OK"}',
+    return HttpResponse('{"response": "False"}',
                         content_type='application/json')
 
 
 def ajax_count(request):
-    requests = RequestHistory.objects\
-        .filter(id__gt=request.POST['last_loaded_id'])\
-        .filter(is_viewed=False)\
-        .all()
+    if request.is_ajax() and 'last_loaded_id' in request.POST:
+        requests = RequestHistory.objects\
+            .filter(id__gt=request.POST['last_loaded_id'])\
+            .filter(is_viewed=False)\
+            .all()
 
-    last_request = RequestHistory.objects.latest('id')
-    data = {'requests': [ob.as_json() for ob in requests],
-            'count': requests.count(),
-            'last_request': last_request.id}
+        last_request = RequestHistory.objects.latest('id')
+        data = {'requests': [ob.as_json() for ob in requests],
+                'count': requests.count(),
+                'last_request': last_request.id}
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    return HttpResponse('{"response": "False"}',
+                        content_type='application/json')
