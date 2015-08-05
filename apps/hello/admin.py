@@ -12,5 +12,15 @@ class UserAdmin(admin.ModelAdmin):
                     'other_contacts')
     search_fields = ('name', 'last_name', 'email')
 
+
+class RequestHistoryAdmin(admin.ModelAdmin):
+    list_display = ('path',
+                    'host',
+                    'method',
+                    'ip',
+                    'date',
+                    'is_viewed')
+    list_filter = ('host', 'ip', 'method')
+
 admin.site.register(User, UserAdmin)
-admin.site.register(RequestHistory)
+admin.site.register(RequestHistory, RequestHistoryAdmin)
