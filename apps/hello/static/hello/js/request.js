@@ -43,7 +43,7 @@ function getNewRequests() {
         dataType: "json",
         url: '/api/v1/count',
         method: 'POST',
-        data: {lastLoadedId: lastLoadedId},
+        data: {last_loaded_id: lastLoadedId},
         success: function(response) {
             renderResponse(response);
         }
@@ -62,7 +62,7 @@ function renderResponse(response) {
         $('#requests-table > tbody').prepend(tableRow);
     });
 
-    document.getElementById('requests-table').setAttribute('data-last-id', response.lastRequest);
+    document.getElementById('requests-table').setAttribute('data-last-id', response.last_request);
 
     var title = document.title;
     title = title.slice(' ', 10);

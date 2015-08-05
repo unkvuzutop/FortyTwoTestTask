@@ -50,6 +50,7 @@ def ajax_update(request):
                         content_type='application/json')
 
 
+@csrf_protect
 def ajax_count(request):
     if request.is_ajax() and 'last_loaded_id' in request.POST:
         requests = RequestHistory.objects\
