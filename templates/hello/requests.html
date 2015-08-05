@@ -7,40 +7,44 @@
 {% endblock extra_head %}
 
 {% block content %}
-    <table class="table table-bordered text-center" id="requests-table" data-last-id="{{ last_request.id }}">
-        <thead>
-        <tr>
-            <td class="col-lg-2">Type</td>
-            <td class="col-lg-2">Query</td>
-            <td class="col-lg-2">Date</td>
-            <td class="col-lg-2">IP</td>
-            <td class="col-lg-2">Host requested</td>
-        </tr>
-        </thead>
-        <tbody>
-            {% for request in latest_requests %}
-                <tr class="request {% if request.is_viewed %}readed{% else %} unreaded{% endif %}"  id="request_{{ request.id }}" data-id="{{ request.id }}" >
-                    <td>
-                        {{ request.method }}
-                    </td>
-                    <td>
-                        {{ request.path }}
-                    </td>
-                    <td>
-                        {{ request.date|date:'Y-m-d h:m:s' }}
-                    </td>
-                    <td>
-                        {{ request.ip }}
-                    </td>
-                    <td>
-                        {{ request.host }}
-                    </td>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered text-center" id="requests-table" data-last-id="{{ last_request.id }}">
+                <thead>
+                <tr>
+                    <td class="col-lg-2">Type</td>
+                    <td class="col-lg-2">Query</td>
+                    <td class="col-lg-2">Date</td>
+                    <td class="col-lg-2">IP</td>
+                    <td class="col-lg-2">Host requested</td>
                 </tr>
-            {% empty %}
-                <tr>Haven't requests yet</tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    {% for request in latest_requests %}
+                        <tr class="request {% if request.is_viewed %}readed{% else %} unreaded{% endif %}"  id="request_{{ request.id }}" data-id="{{ request.id }}" >
+                            <td>
+                                {{ request.method }}
+                            </td>
+                            <td>
+                                {{ request.path }}
+                            </td>
+                            <td>
+                                {{ request.date|date:'Y-m-d h:m:s' }}
+                            </td>
+                            <td>
+                                {{ request.ip }}
+                            </td>
+                            <td>
+                                {{ request.host }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>Haven't requests yet</tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
     <script src="{% static 'hello/js/request.js' %}"></script>
 {% endblock content %}
 
