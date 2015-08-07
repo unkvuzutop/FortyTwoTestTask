@@ -1,0 +1,133 @@
+{% extends 'hello/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<button id="edit-button">Edit</button>
+      <script type="text/javascript"
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="{% static 'hello/js/jquery.cookie.js' %}"></script>
+            <script rel="stylesheet" src="{% static 'hello/js/edit_form.js' %}"></script>
+
+{#  <form action="/user/edit" method="post" id="contactform" class="form-horizontal" role="form">#}
+{#    <div id="ajaxwrapper">#}
+{#    {% csrf_token %}#}
+{#    {{ form.non_field_errors }}#}
+{#    {{ form.name }}#}
+{#    {{ form.as_p }}#}
+{#<div class="col-md-6">#}
+{#    <ul class="list-unstyled">#}
+{#        <li>Name#}
+{#                    <div class="col-md-5">{{ person.name }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Last Name</div>#}
+{#                    <div class="col-md-5">{{ person.last_name }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Date of birth</div>#}
+{#                    <div class="col-md-5">{{ person.date_of_birth|date:"m-d-Y" }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Bio</div>#}
+{#                    <div class="col-md-5">{{ person.bio }}</div>#}
+{#                </li>#}
+{#    </ul>#}
+{#</div>#}
+{##}
+{#<div class="col-md-6">#}
+{#    <ul class="list-unstyled">#}
+{#        <li>#}
+{#                          <div class="col-md-5">Email</div>#}
+{#                    <div class="col-md-5">{{ person.email }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Jabber ID</div>#}
+{#                    <div class="col-md-5">{{ person.jabber }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Skype</div>#}
+{#                    <div class="col-md-5">{{ person.skype }}</div>#}
+{#                </li>#}
+{#                <li >#}
+{#                    <div class="col-md-5">Other contacts:</div>#}
+{#                    <div class="col-md-5">{{ person.other_contacts }}</div>#}
+{#                </li>#}
+{#    </ul>#}
+{#</div>#}
+{#    <p id="sendwrapper"><input type="submit" value="Send" id="sendbutton"/></p>#}
+{#    </div>#}
+{#  </form>#}
+
+
+
+<form disabled="disabled" action ='{% url 'hello:user_edit' pk=1%}' class="form-horizontal" id='contactform' role="form" >
+<div id="ajaxwrapper">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="col-md-6">
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="name">Name:</label>
+    <div class="col-sm-3">
+        {{ form.name }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="last_name">Last Name:</label>
+    <div class="col-sm-3">
+        {{ form.last_name }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="date_of_birth">Date of birth:</label>
+    <div class="col-sm-3">
+        {{ form.date_of_birth }}
+    </div>
+  </div>
+
+    <div class="form-group">
+    <label class="control-label col-sm-2" for="bio">Bio:</label>
+    <div class="col-sm-3">
+        {{ form.bio }}
+    </div>
+  </div>
+</div>
+    <div class="col-md-6">
+        <div class="form-group">
+    <label class="control-label col-sm-2" for="email">Email:</label>
+    <div class="col-sm-3">
+        {{ form.email }}
+    </div>
+  </div>
+        <div class="form-group">
+    <label class="control-label col-sm-2" for="jabber">Jabber:</label>
+    <div class="col-sm-3">
+        {{ form.jabber }}
+    </div>
+  </div>
+        <div class="form-group">
+    <label class="control-label col-sm-2" for="skype">Skype:</label>
+    <div class="col-sm-3">
+        {{ form.skype }}
+    </div>
+  </div>
+</div>
+        <div class="form-group">
+    <label class="control-label col-sm-2" for="other_contacts">Other Contacts:</label>
+    <div class="col-sm-3">
+        {{ form.other_contacts }}
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+  </div>
+
+    </div>
+</form>
+
+{% endblock content %}
+
