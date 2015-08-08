@@ -1,6 +1,7 @@
+import StringIO
+from PIL import Image as Img
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-
-# Create your models here.
 
 
 class User(models.Model):
@@ -12,9 +13,40 @@ class User(models.Model):
     jabber = models.CharField(blank=True, max_length=30, unique=True)
     skype = models.CharField(blank=True, max_length=30, unique=True)
     other_contacts = models.TextField()
+    photo = models.ImageField(upload_to='hello', null=True)
+    photo_preview = models.ImageField(upload_to='hello/preview', null=True)
 
     def __unicode__(self):
         return self.name
+
+    def as_json(self):
+        return dict(
+            id=self.id,
+            name=self.name,
+            last_name=self.last_name,
+            date_of_birth=self.date_of_birth.strftime('%Y-%m-%d %H:%M:%S'),
+            bio=self.bio,
+            email=self.email,
+            jabber=self.jabber,
+            skype=self.skype,
+            other_contacts=self.other_contacts,
+            photo=self.photo.path,
+            photo_preview=self.photo_preview.path)
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            image = Img.open(StringIO.StringIO(self.photo.read()))
+            image.thumbnail((200,200), Img.ANTIALIAS)
+            output = StringIO.StringIO()
+            image.save(output, format='JPEG', quality=75)
+            output.seek(0)
+            self.photo_preview = InMemoryUploadedFile(output,
+                                                      'ImageField',
+                                                      self.photo.name,
+                                                      'image/jpeg',
+                                                      output.len,
+                                                      None)
+        super(User, self).save(*args, **kwargs)
 
 
 class RequestHistory(models.Model):
