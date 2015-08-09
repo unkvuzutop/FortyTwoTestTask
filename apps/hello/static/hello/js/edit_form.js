@@ -88,7 +88,10 @@ jQuery(function(ev, da) {
 });
 
 $( document ).ajaxComplete(function() {
-  document.getElementById('edit-button').style.display = 'block';
+    var submit_status = document.getElementById('submit').style.display;
+    if (submit_status == 'none') {
+        document.getElementById('edit-button').style.display = 'block';
+    }
 });
 
 $('#edit-button').on('click', function () {
