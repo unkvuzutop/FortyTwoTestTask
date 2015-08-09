@@ -48,6 +48,11 @@ class User(models.Model):
                                                       None)
         super(User, self).save(*args, **kwargs)
 
+    def admin_preview(self):
+        return '<a href="/uploads/{0}"><img src="/uploads/{0}"></a>'.\
+            format(self.photo_preview)
+    admin_preview.allow_tags = True
+
 
 class RequestHistory(models.Model):
     path = models.CharField(max_length=2000)
