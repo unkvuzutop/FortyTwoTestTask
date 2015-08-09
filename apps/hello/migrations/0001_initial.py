@@ -8,39 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'User'
-        db.create_table(u'hello_user', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('date_of_birth', self.gf('django.db.models.fields.DateField')()),
-            ('bio', self.gf('django.db.models.fields.TextField')()),
-            ('email', self.gf('django.db.models.fields.EmailField')(unique=True, max_length=75)),
-            ('jabber', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, blank=True)),
-            ('skype', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30, blank=True)),
-            ('other_contacts', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal(u'hello', ['User'])
-
-        # Adding model 'RequestHistory'
-        db.create_table(u'hello_requesthistory', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('path', self.gf('django.db.models.fields.CharField')(max_length=2000)),
-            ('host', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('method', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('ip', self.gf('django.db.models.fields.GenericIPAddressField')(max_length=39)),
-            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('is_viewed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'hello', ['RequestHistory'])
+        # Adding field 'User.photo'
+        db.add_column(u'hello_user', 'photo',
+                      self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'User'
-        db.delete_table(u'hello_user')
-
-        # Deleting model 'RequestHistory'
-        db.delete_table(u'hello_requesthistory')
+        # Deleting field 'User.photo'
+        db.delete_column(u'hello_user', 'photo')
 
 
     models = {
@@ -64,6 +40,7 @@ class Migration(SchemaMigration):
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'other_contacts': ('django.db.models.fields.TextField', [], {}),
+            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True'}),
             'skype': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'blank': 'True'})
         }
     }
