@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'south',
     'apps.hello',
 )
 
@@ -86,7 +86,7 @@ USE_TZ = True
 # Upload Media
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'uploads')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -153,3 +153,9 @@ LOGGING = {
 
     },
 }
+
+LOGIN_URL = '/accounts/login/'
+
+LOGIN_REDIRECT_URL = '/'
+
+LOGOUT_REDIRECT_URL = '/'

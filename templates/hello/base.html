@@ -1,12 +1,23 @@
 {% extends 'base.html' %}
 
 {% block footer %}
-    <div class="container modal-footer">
-        <div class="nav col-sm-1">
-            <a href="{% url 'hello:home' %}">Home</a>
-        </div>
-        <div class="nav> col-sm-1">
-            <a href="{% url 'hello:requests' %}">Request</a>
-        </div>
+    <div class="nav col-sm-1">
+        <a href="{% url 'hello:home' %}">Home</a>
     </div>
-    {% endblock footer %}
+    <div class="nav> col-sm-1">
+        <a href="{% url 'hello:requests' %}">Request</a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="nav> col-sm-1">
+        <a href="{% url 'hello:user_edit'%}">Edit</a>
+    </div>
+    <div class="nav> col-sm-1">
+        <a href="{% url 'hello:logout' %}">Logout</a>
+    </div>
+    {% else %}
+    <div class="nav> col-sm-1">
+        <a href="{% url 'hello:login' %}">Login</a>
+    </div>
+    {% endif %}
+{% endblock footer %}

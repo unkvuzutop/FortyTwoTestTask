@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -140,3 +141,46 @@ class RequestsPageTests(TestCase):
         response = self.client.get(reverse('hello:ajax_count'))
 
         self.assertEqual(response.content, '{"response": "False"}')
+
+
+class EditPageTests(TestCase):
+    def setUp(self):
+            self.kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
+
+    def test_edit_page_access(self):
+        """
+        1) check login required for edit page
+        2) check page is available after login
+        3) check response after update form
+        4) check response if request in not Ajax
+        5) check response if one from required fields
+            doesn't given in form_data
+        """
+        response = self.client.get(reverse('hello:user_edit'))
+        self.assertEqual(response.status_code, 302)
+
+        self.client.login(username='admin', password='admin')
+
+        response = self.client.get(reverse('hello:user_edit'))
+        self.assertEqual(response.status_code, 200)
+
+        form_data = dict(name='name', last_name='last name',
+                         date_of_birth=datetime.strftime(datetime.now(),
+                                                         '%Y-%m-%d'),
+                         bio='some Bio', email=settings.ADMIN_EMAIL,
+                         jabber='jabber', skype='skype',
+                         other_contacts='other contacts')
+
+        response = self.client.post(reverse('hello:user_edit'),
+                                    form_data, **self.kwargs)
+
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('hello:user_edit'),
+                                    form_data)
+
+        self.assertEqual(response.status_code, 302)
+
+        form_data.pop('email')
+        response = self.client.post(reverse('hello:user_edit'),
+                                    form_data, **self.kwargs)
+        self.assertEqual(response.status_code, 400)

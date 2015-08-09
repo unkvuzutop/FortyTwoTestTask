@@ -9,8 +9,10 @@ class UserAdmin(admin.ModelAdmin):
                     'bio',
                     'jabber',
                     'skype',
-                    'other_contacts')
+                    'other_contacts',
+                    'admin_preview')
     search_fields = ('name', 'last_name', 'email')
+    readonly_fields = ('photo_preview', 'photo')
 
 
 class RequestHistoryAdmin(admin.ModelAdmin):

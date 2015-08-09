@@ -24,3 +24,41 @@
 .unreaded {
     color: red;
 }
+#success {
+    color: #15D215;
+}
+.error {
+    color: red;
+}
+#edit-button {
+    display: block;
+}
+#submit {
+    display: none;
+}
+#cancel {
+    display: none;
+}
+
+#form-error {
+    color: red;
+}
+.image {
+    display: block;
+    max-width:400px;
+    max-height:400px;
+    width: auto;
+    height: auto;
+}
+
+.info-row {
+    height: 40px;
+}
+#ajaxwrapper {
+    text-align: left;
+}
+.label-form {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
