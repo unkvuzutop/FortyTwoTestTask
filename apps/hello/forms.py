@@ -4,6 +4,7 @@ from apps.hello.models import User
 
 class UserEditForm(forms.ModelForm):
     photo = forms.ImageField(required=False, widget=forms.FileInput)
+    photo_preview = forms.ImageField(required=False)
 
     class Meta(object):
         model = User
@@ -15,7 +16,8 @@ class UserEditForm(forms.ModelForm):
                   'jabber',
                   'skype',
                   'other_contacts',
-                  'photo')
+                  'photo',
+                  'photo_preview')
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date',
                                                     'class': 'form-control',
@@ -41,4 +43,5 @@ class UserEditForm(forms.ModelForm):
                     'disabled': 'disabled'})
         self.fields['photo'].widget.attrs.update({'disabled': 'disabled',
                                                   'display': 'none'})
+
 
