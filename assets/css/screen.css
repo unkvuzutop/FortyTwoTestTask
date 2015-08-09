@@ -54,3 +54,11 @@
 .info-row {
     height: 40px;
 }
+#ajaxwrapper {
+    text-align: left;
+}
+.label-form {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
