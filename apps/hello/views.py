@@ -47,6 +47,7 @@ class PersonEdit(UpdateView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         if getattr(settings, 'DEBUG', True) and request.POST:
+            logging.info('sleep 5 sec for Ajax monitoring')
             time.sleep(5)  # delay AJAX response for s5 seconds
         return super(PersonEdit, self).dispatch(request, *args, **kwargs)
 
