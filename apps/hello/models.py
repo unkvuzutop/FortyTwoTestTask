@@ -2,6 +2,8 @@ import StringIO
 from PIL import Image as Img
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 class User(models.Model):
@@ -73,3 +75,33 @@ class RequestHistory(models.Model):
             method=self.method,
             ip=self.ip,
             date=self.date.strftime('%Y-%m-%d %H:%M:%S'))
+
+
+class EventHistory(models.Model):
+    model = models.CharField(max_length=20,
+                             blank=True,
+                             null=False)
+    related_id = models.IntegerField()
+    event = models.CharField(max_length=10,
+                             blank=True,
+                             null=False)
+    date = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.model
+
+
+@receiver(post_save, sender=User)
+@receiver(post_save, sender=RequestHistory)
+@receiver(post_delete, sender=User)
+@receiver(post_delete, sender=RequestHistory)
+def my_handler(sender, **kwargs):
+    history = EventHistory(related_id=kwargs['instance'].id,
+                           model=kwargs['instance']._meta.db_table)
+    if 'created' not in kwargs:
+        history.event = 'delete'
+    elif 'created' in kwargs and kwargs['created'] is False:
+        history.event = 'update'
+    elif 'created' in kwargs and kwargs['created'] is True:
+        history.event = 'insert'
+    history.save()
