@@ -34,7 +34,7 @@ class UserEditForm(forms.ModelForm):
                                                 'disabled': 'disabled'}),
         self.fields['email'].widget.attrs.update({'class': 'form-control',
                                                   'disabled': 'disabled',
-                                                  'readonly':'True'}),
+                                                  'readonly': 'True'}),
         self.fields['jabber'].widget.attrs.update({'class': 'form-control',
                                                    'disabled': 'disabled'}),
         self.fields['skype'].widget.attrs.update({'class': 'form-control',
@@ -45,5 +45,3 @@ class UserEditForm(forms.ModelForm):
         self.fields['photo'].widget.attrs.update({'disabled': 'disabled',
                                                   'display': 'none',
                                                   'title': 'Upload file...'})
-
-

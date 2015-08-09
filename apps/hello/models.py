@@ -36,7 +36,7 @@ class User(models.Model):
     def save(self, *args, **kwargs):
         if self.photo:
             image = Img.open(StringIO.StringIO(self.photo.read()))
-            image.thumbnail((200,200), Img.ANTIALIAS)
+            image.thumbnail((200, 200), Img.ANTIALIAS)
             output = StringIO.StringIO()
             image.save(output, format='JPEG', quality=75)
             output.seek(0)
