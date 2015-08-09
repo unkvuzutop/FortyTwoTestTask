@@ -19,9 +19,9 @@ class UserEditForm(forms.ModelForm):
                   'photo',
                   'photo_preview')
         widgets = {
-            'date_of_birth': forms.DateInput(attrs={'type': 'date',
-                                                    'class': 'form-control',
-                                                    'disabled': 'disabled'})
+            'date_of_birth': forms.DateInput(
+                attrs={'class': 'form-control datepicker',
+                                'disabled': 'disabled'})
         }
 
     def __init__(self, *args, **kwargs):
