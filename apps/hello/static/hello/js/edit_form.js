@@ -18,7 +18,6 @@ $.ajaxSetup({
 
 
 function closeForm() {
-    document.getElementById('edit-button').style.display = 'block';
     document.getElementById('submit').style.display ='none';
     document.getElementById('cancel').style.display ='none';
     document.getElementById('id_photo').style.display = 'none';
@@ -61,10 +60,8 @@ $('#cancel').on('click', function () {
 jQuery(function(ev, da) {
     var form = jQuery("#contactform");
     form.submit(function(e,data) {
-    statusString.empty();
-
-    console.log(e);
-    console.log(data);
+        statusString.empty();
+        document.getElementById('edit-button').style.display = 'none';
         jQuery("#sendbutton").attr('disabled', true);
         statusString.prepend('<span>Sending message, please wait... </span>');
         $.ajax({
@@ -74,7 +71,6 @@ jQuery(function(ev, da) {
             url: form.attr('action'),
             data: form.serialize(),
             success: function (data) {
-                //$("#sendwrapper").html(data);
                 statusString.empty();
                 statusString.prepend('<span id="success">Profile updated seccesfully</span>');
                 baseFormObject =document.getElementById('contactform');
@@ -85,11 +81,14 @@ jQuery(function(ev, da) {
                 $.each(response, function (key, value) {
                     $('#status').html('<span id="form-error" >ERROR:' + key +' : ' + value);
                 });
-                //$("#ajaxwrapper").html("Something went wrong!");
             }
         });
         e.preventDefault();
     });
+});
+
+$( document ).ajaxComplete(function() {
+  document.getElementById('edit-button').style.display = 'block';
 });
 
 $('#edit-button').on('click', function () {
@@ -105,7 +104,6 @@ $(function() {
     $( ".datepicker" ).datepicker({
         changeMonth: true,
         changeYear: true,
-        yearRange: "1900:2012",
-        // You can put more options here.
+        yearRange: "1900:2012"
     });
 });
