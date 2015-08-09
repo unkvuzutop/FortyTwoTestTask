@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from django.core import urlresolvers
 from django.contrib.contenttypes.models import ContentType
 from django import template
