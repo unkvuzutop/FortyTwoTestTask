@@ -99,3 +99,13 @@ $('#edit-button').on('click', function () {
 // bootstrap custom upload file button
 $('input[type=file]').bootstrapFileInput();
 $('.file-inputs').bootstrapFileInput();
+
+// datetimepickrer init
+$(function() {
+    $( ".datepicker" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1900:2012",
+        // You can put more options here.
+    });
+});
