@@ -3,41 +3,51 @@
 {% block content %}
         <div class="row main-text">
             <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-md-5">Name</div>
-                    <div class="col-md-5">{{ person.name }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Last Name</div>
-                    <div class="col-md-5">{{ person.last_name }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Date of birth</div>
-                    <div class="col-md-5">{{ person.date_of_birth|date:"m-d-Y" }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Bio</div>
-                    <div class="col-md-5">{{ person.bio }}</div>
-                </div>
+                <ul class="list-unstyled">
+                        <li class="row info-row">
+                            <div class="col-md-5"><strong>Name</strong></div>
+                            <div class="col-md-5">{{ person.name }}</div>
+                        </li>
+                        <li class="row info-row">
+                            <div class="col-md-5"><strong>Last Name</strong></div>
+                            <div class="col-md-5">{{ person.last_name }}</div>
+                        </li>
+                        <li class="row info-row">
+                            <div class="col-md-5"><strong>Date of birth</strong></div>
+                            <div class="col-md-5">{{ person.date_of_birth|date:"m-d-Y" }}</div>
+                        </li>
+                        <li><div class="cleaned"></div> </li>
+                        <li class="row">
+
+                            <div class="col-md-5"><strong>Photo</strong></div>
+                            <img class="image" src="{{ MEDIA_URL }}{{ person.photo }}">
+                        </li>
+                </ul>
             </div>
             <div class="col-lg-6">
-        <p class="main-text"><strong>Contacts:</strong></p>
-                <div class="row">
-                    <div class="col-md-5">Email</div>
-                    <div class="col-md-5">{{ person.email }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Jabber ID</div>
-                    <div class="col-md-5">{{ person.jabber }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Skype</div>
-                    <div class="col-md-5">{{ person.skype }}</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">Other contacts:</div>
-                    <div class="col-md-5">{{ person.other_contacts }}</div>
-                </div>
+                <p class="main-text"><strong>Contacts:</strong></p>
+                <ul class="list-unstyled">
+                    <li class="row info-row">
+                        <div class="col-md-5"><strong>Email</strong></div>
+                        <div class="col-md-5">{{ person.email }}</div>
+                    </li>
+                    <li class="row info-row">
+                        <div class="col-md-5"><strong>Jabber ID</strong></div>
+                        <div class="col-md-5">{{ person.jabber }}</div>
+                    </li>
+                    <li class="row info-row">
+                        <div class="col-md-5"><strong>Skype</strong></div>
+                        <div class="col-md-5">{{ person.skype }}</div>
+                    </li>
+                    <li class="row info-row">
+                        <div class="col-md-5"><strong>Other contacts:</strong></div>
+                        <div class="col-md-5">{{ person.other_contacts }}</div>
+                    </li>
+                    <li class="row info-row">
+                        <div class="col-md-5"><strong>Bio</strong></div>
+                        <div class="col-md-5">{{ person.bio }}</div>
+                    </li>
+                </ul>
             </div>
         </div>
 {% endblock content %}
