@@ -95,16 +95,14 @@
             </div>
         </form>
     </div>
+    {% if user.is_authenticated %}
     <div class="col-lg-1">
-        {% if user.is_authenticated %}
-            <input type="button" class="btn" id="edit-button" value="Edit" >
-        {% endif %}
+        <input type="button" class="btn" id="edit-button" value="Edit" >
     </div>
-        <div class="col-lg-1">
-        {% if user.is_authenticated %}
-            {% admin_url form.instance %}
-        {% endif %}
+    <div class="col-lg-1">
+        {% admin_url form.instance %}
     </div>
+    {% endif %}
 
     <script src="{% static 'js/bootstrap.file-input.js' %}"></script>
     <script src="{% static 'hello/js/edit_form.js' %}"></script>
