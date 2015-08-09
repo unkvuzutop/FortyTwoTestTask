@@ -24,8 +24,11 @@
 .unreaded {
     color: red;
 }
-#status {
-    color: greenyellow;
+.seccess {
+    color: darkgreen;
+}
+.error {
+    color: red;
 }
 #edit-button {
     display: block;
