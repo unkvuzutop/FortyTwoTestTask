@@ -24,3 +24,30 @@
 .unreaded {
     color: red;
 }
+#status {
+    color: greenyellow;
+}
+#edit-button {
+    display: block;
+}
+#submit {
+    display: none;
+}
+#cancel {
+    display: none;
+}
+
+#form-error {
+    color: red;
+}
+.image {
+    display: block;
+    max-width:400px;
+    max-height:400px;
+    width: auto;
+    height: auto;
+}
+
+.info-row {
+    height: 40px;
+}
