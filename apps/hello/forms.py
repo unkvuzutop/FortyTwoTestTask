@@ -39,5 +39,6 @@ class UserEditForm(forms.ModelForm):
         self.fields['other_contacts'].widget.attrs.\
             update({'class': 'form-control',
                     'disabled': 'disabled'})
-        self.fields['photo'].widget.attrs.update({'disabled': 'disabled'})
+        self.fields['photo'].widget.attrs.update({'disabled': 'disabled',
+                                                  'display': 'none'})
 
