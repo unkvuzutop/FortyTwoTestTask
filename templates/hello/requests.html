@@ -1,9 +1,12 @@
 {% extends 'hello/base.html' %}
+
 {% load staticfiles %}
+
 {% block title %} {{ latest_requsts|length }} {% endblock title %}
+
 {% block extra_head %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="{% static 'hello/js/jquery.cookie.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{% static 'hello/js/jquery.cookie.js' %}"></script>
 {% endblock extra_head %}
 
 {% block content %}
