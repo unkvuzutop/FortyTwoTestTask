@@ -42,6 +42,7 @@ class UserEditForm(forms.ModelForm):
             update({'class': 'form-control',
                     'disabled': 'disabled'})
         self.fields['photo'].widget.attrs.update({'disabled': 'disabled',
-                                                  'display': 'none'})
+                                                  'display': 'none',
+                                                  'title': 'Upload file...'})
 
 
