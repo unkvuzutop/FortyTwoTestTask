@@ -30,8 +30,8 @@ class User(models.Model):
             jabber=self.jabber,
             skype=self.skype,
             other_contacts=self.other_contacts,
-            photo=self.photo.url,
-            photo_preview=self.photo_preview.url)
+            photo=self.photo.url if self.photo else '',
+            photo_preview=self.photo_preview.url if self.photo_preview else '')
 
     def save(self, *args, **kwargs):
         if self.photo:
