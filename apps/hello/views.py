@@ -38,7 +38,7 @@ def request_list(request):
 class PersonEdit(UpdateView):
     model = User
     form_class = UserEditForm
-    success_url = reverse_lazy('student_list')
+    success_url = reverse_lazy('hello:user_edit')
 
     def get_object(self):
         object = User.objects.get(email=settings.ADMIN_EMAIL)
@@ -52,7 +52,8 @@ class PersonEdit(UpdateView):
 
     def form_valid(self, form):
         if self.request.is_ajax():
-            self.object.photo = self.request.FILES['photo']
+            if self.request.FILES:
+                self.object.photo = self.request.FILES['photo']
             self.object = form.save()
             return HttpResponse(json.dumps(self.object.as_json()),
                                 content_type="application/json")
