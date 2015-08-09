@@ -54,4 +54,3 @@ function UploadPhoto() {
         processData: false
     });
 }
-var statusString = jQuery("#status");

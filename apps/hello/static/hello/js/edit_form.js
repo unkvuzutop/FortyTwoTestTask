@@ -1,4 +1,6 @@
 var csrftoken = $.cookie('csrftoken');
+var statusString = jQuery("#status");
+var baseFormObject =document.getElementById('contactform');
 
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
@@ -14,13 +16,13 @@ $.ajaxSetup({
     }
 });
 
-var baseFormObject =document.getElementById('contactform');
 
 function closeForm() {
     document.getElementById('edit-button').style.display = 'block';
     document.getElementById('submit').style.display ='none';
     document.getElementById('cancel').style.display ='none';
-
+    document.getElementById('id_photo').style.display = 'none';
+    document.getElementById('id_photo').setAttribute('disabled', 'disabled');
     var newRows = $("#contactform").find(".form-control");
 
     $.each(newRows, function (key, row) {
@@ -30,6 +32,8 @@ function closeForm() {
 
 function openForm() {
     document.getElementById('edit-button').style.display = 'none';
+    document.getElementById('id_photo').style.display = 'block';
+    document.getElementById('id_photo').removeAttribute('disabled');
     document.getElementById('submit').style.display ='block';
     document.getElementById('cancel').style.display ='block';
 
@@ -41,7 +45,7 @@ function openForm() {
 
 function reset(e) {
     $('#contactform').empty();
-    jQuery("#status").prepend(baseFormObject.getEinnerHTML);
+    statusString.prepend(baseFormObject.getEinnerHTML);
 }
 
 $('#cancel').on('click', function () {
@@ -57,11 +61,12 @@ $('#cancel').on('click', function () {
 jQuery(function(ev, da) {
     var form = jQuery("#contactform");
     form.submit(function(e,data) {
+    statusString.empty();
 
     console.log(e);
     console.log(data);
         jQuery("#sendbutton").attr('disabled', true);
-        jQuery("#status").prepend('<span>Sending message, please wait... </span>');
+        statusString.prepend('<span>Sending message, please wait... </span>');
         $.ajax({
             type: 'json',
             method: 'POST',
@@ -70,8 +75,8 @@ jQuery(function(ev, da) {
             data: form.serialize(),
             success: function (data) {
                 //$("#sendwrapper").html(data);
-                jQuery("#status").empty();
-                jQuery("#status").prepend('<span>Secces</span>');
+                statusString.empty();
+                statusString.prepend('<span id="success">Profile updated seccesfully</span>');
                 baseFormObject =document.getElementById('contactform');
                 closeForm();
             },
@@ -90,3 +95,7 @@ jQuery(function(ev, da) {
 $('#edit-button').on('click', function () {
     openForm()
 });
+
+// bootstrap custom upload file button
+$('input[type=file]').bootstrapFileInput();
+$('.file-inputs').bootstrapFileInput();
