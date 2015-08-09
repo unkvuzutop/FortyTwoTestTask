@@ -45,7 +45,7 @@ function UploadPhoto() {
             statusString.empty();
             statusString.prepend('<span id="success">Image uploaded</span>');
         },
-        // Form data
+        // Form data .
         data: formData,
         //Options to tell jQuery not to process data or worry about content-type.
         cache: false,
