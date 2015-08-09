@@ -24,8 +24,8 @@
 .unreaded {
     color: red;
 }
-.seccess {
-    color: darkgreen;
+#success {
+    color: #15D215;
 }
 .error {
     color: red;
