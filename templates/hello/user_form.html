@@ -1,5 +1,7 @@
 {% extends 'hello/base.html' %}
+
 {% load staticfiles %}
+{% load admin_tags %}
 
 {% block extra_head %}
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -98,6 +100,12 @@
             <input type="button" class="btn" id="edit-button" value="Edit" >
         {% endif %}
     </div>
+        <div class="col-lg-1">
+        {% if user.is_authenticated %}
+            {% admin_url form.instance %}
+        {% endif %}
+    </div>
+
     <script src="{% static 'js/bootstrap.file-input.js' %}"></script>
     <script src="{% static 'hello/js/edit_form.js' %}"></script>
     <script src="{% static 'hello/js/upload.js' %}"></script>
