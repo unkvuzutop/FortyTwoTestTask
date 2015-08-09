@@ -8,13 +8,12 @@ import views
 
 urlpatterns = [
     url(r'^$', views.user_detail, name='home'),
-    url(r'^studentlist/edit/(?P<pk>\d+)$', views.StudentEdit.as_view(),
-        name='user_edit'),
+    url(r'^user/edit$', views.PersonEdit.as_view(), name='user_edit'),
+    
     url(r'^requests$', views.request_list, name='requests'),
     url(r'^api/v1/update$', views.ajax_update, name='ajax_update'),
     url(r'^api/v1/count', views.ajax_count, name='ajax_count'),
 
-    url(r'^api/v1/user/edit/(?P<pk>\d+)$', views.ajax_count, name='ajax_edit'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
