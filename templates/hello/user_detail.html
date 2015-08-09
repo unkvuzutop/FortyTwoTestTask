@@ -2,7 +2,7 @@
 
 {% block content %}
         <div class="row main-text">
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <ul class="list-unstyled">
                         <li class="row info-row">
                             <div class="col-md-5"><strong>Name</strong></div>
@@ -48,6 +48,17 @@
                         <div class="col-md-5">{{ person.bio }}</div>
                     </li>
                 </ul>
+            </div>
+            <div class="col-sm-1">
+                {% if user.is_authenticated %}
+                    <div class="nav on-page> col-sm-1">
+                        <a href="{% url 'hello:user_edit'%}">Edit</a>
+                    </div>
+                {% else %}
+                    <div class="nav on-page> col-sm-1">
+                        <a href="{% url 'hello:login' %}">Login</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 {% endblock content %}
