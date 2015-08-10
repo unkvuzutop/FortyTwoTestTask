@@ -1,9 +1,12 @@
 from datetime import datetime
 import json
 from django.core.urlresolvers import reverse
+from django.template import Template, Context
 from django.test import TestCase
 
+
 from apps.hello.models import User, RequestHistory
+from apps.hello.templatetags.admin_tags import admin_url
 from fortytwo_test_task import settings
 
 
@@ -184,3 +187,19 @@ class EditPageTests(TestCase):
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
         self.assertEqual(response.status_code, 400)
+
+
+class TemplateTagTest(TestCase):
+    def render_template(self, string, context=None):
+        context = context or {}
+        context = Context(context)
+        return Template(string).render(context)
+
+    def test_tag(self):
+        user= User.objects.get(email=settings.ADMIN_EMAIL)
+
+        tag_template  = self.render_template(
+            '{% load admin_tags %}{% admin_url user %}',
+            context={'user': user})
+
+        self.assertEqual(tag_template, admin_url(user))
