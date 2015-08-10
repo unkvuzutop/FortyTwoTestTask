@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class InfoFilter(logging.Filter):
     def filter(self, rec):
-        return rec.levelno  in (logging.INFO,)
+        return rec.levelno in (logging.INFO,)
 
 
 class Command(BaseCommand):
@@ -29,4 +29,3 @@ class Command(BaseCommand):
             message = 'Model name - {0}, have {1} objects'\
                 .format(model.__name__, model.objects.count())
             logger.info(message)
-
