@@ -196,9 +196,13 @@ class TemplateTagTest(TestCase):
         return Template(string).render(context)
 
     def test_tag(self):
-        user= User.objects.get(email=settings.ADMIN_EMAIL)
+        """
+        render template for template tag and compare
+        result from template and result from tag method
+        """
+        user = User.objects.get(email=settings.ADMIN_EMAIL)
 
-        tag_template  = self.render_template(
+        tag_template = self.render_template(
             '{% load admin_tags %}{% admin_url user %}',
             context={'user': user})
 
