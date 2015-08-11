@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.views.decorators.csrf import csrf_protect
 from apps.hello.models import User, RequestHistory
+from django.conf import settings
 
-from fortytwo_test_task import settings
 
 logger = logging.getLogger(__name__)
 
