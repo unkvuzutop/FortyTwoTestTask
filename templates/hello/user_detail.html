@@ -22,7 +22,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">Bio</div>
-                    <div class="col-md-5">{{ user.bio }}</div>
+                    <div class="col-md-5">{{ user.bio|linebreaks }}</div>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -40,8 +40,8 @@
                     <div class="col-md-5">{{ user.skype }}</div>
                 </div>
                 <div class="row">
-                    <div class="col-md-5    ">Other contacts:</div>
-                    <div class="col-md-5">{{ user.other_contacts }}</div>
+                    <div class="col-md-5">Other contacts:</div>
+                    <div class="col-md-5">{{ user.other_contacts|linebreaks }}</div>
                 </div>
             </div>
         </div>
