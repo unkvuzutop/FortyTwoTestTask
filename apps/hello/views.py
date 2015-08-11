@@ -12,8 +12,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
 from apps.hello.forms import UserEditForm
 from apps.hello.models import User, RequestHistory
+from django.conf import settings
 
-from fortytwo_test_task import settings
 
 logger = logging.getLogger(__name__)
 
