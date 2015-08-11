@@ -41,11 +41,11 @@
                     </li>
                     <li class="row info-row">
                         <div class="col-md-5"><strong>Other contacts:</strong></div>
-                        <div class="col-md-5">{{ person.other_contacts }}</div>
+                        <div class="col-md-5">{{ person.other_contacts|linebreaks }}</div>
                     </li>
                     <li class="row info-row">
                         <div class="col-md-5"><strong>Bio</strong></div>
-                        <div class="col-md-5">{{ person.bio }}</div>
+                        <div class="col-md-5">{{ person.bio|linebreaks }}</div>
                     </li>
                 </ul>
             </div>
