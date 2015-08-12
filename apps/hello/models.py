@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 
-class User(models.Model):
+class Profile(models.Model):
     name = models.CharField(blank=False, max_length=50)
     last_name = models.CharField(blank=False, max_length=50)
     date_of_birth = models.DateField()
