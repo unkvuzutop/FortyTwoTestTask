@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 # Create your tests here.
-from apps.hello.models import User
+from apps.hello.models import Profile
 from django.conf import settings
 
 
@@ -19,7 +19,7 @@ class PersonalPageTests(TestCase):
         """
         check user with ADMIN_EMAIL is unique
         """
-        user = User.objects.filter(email=settings.ADMIN_EMAIL).count()
+        user = Profile.objects.filter(email=settings.ADMIN_EMAIL).count()
         self.assertEqual(user, 1)
 
     def test_home_view(self):
@@ -44,15 +44,15 @@ class PersonalPageTests(TestCase):
         """
         test home page with unicode data
         """
-        User.objects.all().delete()
-        User.objects.create(name=u'Сергій',
-                            last_name=u'Благун',
-                            bio=u'інша біографія',
-                            email=u'sergey.drower@gmail.com',
-                            jabber=u'unkvuzutop@khavr.com',
-                            skype=u'unkvuzutop',
-                            date_of_birth=u'1999-08-08',
-                            other_contacts=u'other contacts')
+        Profile.objects.all().delete()
+        Profile.objects.create(name=u'Сергій',
+                               last_name=u'Благун',
+                               bio=u'інша біографія',
+                               email=u'sergey.drower@gmail.com',
+                               jabber=u'unkvuzutop@khavr.com',
+                               skype=u'unkvuzutop',
+                               date_of_birth=u'1999-08-08',
+                               other_contacts=u'other contacts')
 
         response = self.client.get(reverse('hello:home'))
         self.assertIn('Сергій', response.content)
@@ -68,7 +68,7 @@ class PersonalPageTests(TestCase):
         """
         check home page if user doesn't exist
         """
-        User.objects.all().delete()
+        Profile.objects.all().delete()
         response = self.client.get('/')
         self.assertEqual(response.status_code, 404)
         self.assertIn('Page Not Found', response.content)
@@ -77,16 +77,16 @@ class PersonalPageTests(TestCase):
         """
         check right data on home page if 2 users in database
         """
-        User.objects.create(name=u'Сергій',
-                            last_name=u'Благун',
-                            bio=u'інша біографія',
-                            email=u'sergey.other@gmail.com',
-                            jabber=u'unkvuzutop@khavr.com',
-                            skype=u'unkvuzutop1',
-                            date_of_birth=u'1999-08-08',
-                            other_contacts=u'other contacts')
+        Profile.objects.create(name=u'Сергій',
+                               last_name=u'Благун',
+                               bio=u'інша біографія',
+                               email=u'sergey.other@gmail.com',
+                               jabber=u'unkvuzutop@khavr.com',
+                               skype=u'unkvuzutop1',
+                               date_of_birth=u'1999-08-08',
+                               other_contacts=u'other contacts')
 
-        users = User.objects.count()
+        users = Profile.objects.count()
         self.assertGreaterEqual(users, 2)
 
         response = self.client.get(reverse('hello:home'))
@@ -98,3 +98,12 @@ class PersonalPageTests(TestCase):
         self.assertIn('some additional info', response.content)
         self.assertIn('my other contacts', response.content)
         self.assertIn('04-04-1987', response.content)
+
+        self.assertNotIn('Сергій', response.context)
+        self.assertNotIn('Благун', response.context)
+        self.assertNotIn('інша біографія', response.context)
+        self.assertNotIn('sergey.other@gmail.com', response.context)
+        self.assertNotIn('unkvuzutop@khavr.com', response.context)
+        self.assertNotIn('unkvuzutop1', response.context)
+        self.assertNotIn('1999-08-08', response.context)
+        self.assertNotIn('other contacts', response.context)
