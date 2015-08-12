@@ -25,4 +25,3 @@ class RequestHistoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Profile, UserAdmin)
 admin.site.register(RequestHistory, RequestHistoryAdmin)
-
