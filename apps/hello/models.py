@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 
-class User(models.Model):
+class Profile(models.Model):
     name = models.CharField(blank=False, max_length=50)
     last_name = models.CharField(blank=False, max_length=50)
     date_of_birth = models.DateField()
@@ -46,7 +46,7 @@ class User(models.Model):
                                                       'image/jpeg',
                                                       output.len,
                                                       None)
-        super(User, self).save(*args, **kwargs)
+        super(Profile, self).save(*args, **kwargs)
 
     def admin_preview(self):
         return '<a href="/uploads/{0}"><img src="/uploads/{0}"></a>'.\
