@@ -113,13 +113,6 @@ class PersonalPageTests(TestCase):
 
 class RequestsPageTests(TestCase):
     def setUp(self):
-        self.request_object = RequestHistory.\
-            objects.create(path='/',
-                           host='127.0.0.1',
-                           method='GET',
-                           ip='127.0.0.1',
-                           date='2015-01-01 00:00:01',
-                           is_viewed=0)
         self.kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
 
     def test_requests_page_is_work(self):
@@ -157,6 +150,25 @@ class RequestsPageTests(TestCase):
         response = self.client.get(reverse('hello:requests'))
         self.assertLessEqual(len(response.context['latest_requests']),
                              test_requests_count)
+
+    def test_right_data_on_page(self):
+        """
+        - make some unique request and check it on request page
+        """
+        test_url = '/sometesturl/'
+        self.client.get(test_url)
+        response = self.client.get(reverse('hello:requests'))
+        self.assertIn(test_url, response.content)
+
+    def test_no_requests_in_db(self):
+        """
+        check request page while RequestHistory is empty
+        """
+        RequestHistory.objects.all().delete()
+        response = self.client.get(reverse('hello:requests'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('/requests', response.content)
+        self.assertEqual(len(response.context['latest_requests']), 1)
 
     def test_ajax_update_view(self):
         """
