@@ -1,5 +1,6 @@
 from django.contrib import admin
-from apps.hello.models import User, RequestHistory
+
+from apps.hello.models import Profile, RequestHistory
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -22,5 +23,6 @@ class RequestHistoryAdmin(admin.ModelAdmin):
                     'is_viewed')
     list_filter = ('host', 'ip', 'method')
 
-admin.site.register(User, UserAdmin)
+admin.site.register(Profile, UserAdmin)
 admin.site.register(RequestHistory, RequestHistoryAdmin)
+

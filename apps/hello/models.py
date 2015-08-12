@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 
-class User(models.Model):
+class Profile(models.Model):
     name = models.CharField(blank=False, max_length=50)
     last_name = models.CharField(blank=False, max_length=50)
     date_of_birth = models.DateField()
