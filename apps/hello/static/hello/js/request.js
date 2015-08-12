@@ -68,7 +68,7 @@ function renderResponse(response) {
     title = title.slice(' ', 10);
     if (title[0] == '|') {
         document.title = response.count;
-        document.title +=  ' New Request | 42-unkvuzutop-test';
+        document.title +=  ' New Request ' + titleString;
     } else {
         document.title = response.count + $('.unreaded').length-1;
         document.title +=  ' New Request ' + titleString;
