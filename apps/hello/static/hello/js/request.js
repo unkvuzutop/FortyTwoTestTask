@@ -75,5 +75,4 @@ function renderResponse(response) {
 
 }
 
-//getNewRequests();
 setInterval(getNewRequests, 10000);
