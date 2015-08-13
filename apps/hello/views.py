@@ -7,7 +7,7 @@ import time
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 
 from django.views.decorators.csrf import csrf_protect
@@ -43,10 +43,10 @@ def request_list(request):
         if not request.is_viewed:
             latest_requests_count += 1
 
-    return render(request, 'hello/requests.html',
-                  {'latest_requests': latest_requests,
-                   'last_request': last_request,
-                   'latest_requests_count': latest_requests_count})
+    return render_to_response('hello/requests.html',
+                              {'latest_requests': latest_requests,
+                               'last_request': last_request,
+                               'latest_requests_count': latest_requests_count})
 
 
 class PersonEdit(UpdateView):
