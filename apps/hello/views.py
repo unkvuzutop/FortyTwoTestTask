@@ -24,7 +24,10 @@ def request_list(request):
         .exclude(path__in=[reverse('hello:ajax_update'),
                            reverse('hello:ajax_count')])\
         .order_by('-date')[:10]
-    last_request = RequestHistory.objects.latest('id')
+    last_request = RequestHistory.objects\
+        .exclude(path__in=[reverse('hello:ajax_update'),
+                           reverse('hello:ajax_count')])\
+        .latest('id')
 
     latest_requests_count = 0
     for request in latest_requests:
@@ -74,7 +77,11 @@ def ajax_count(request):
                      reverse('hello:ajax_count')])\
             .all()
 
-        last_request = RequestHistory.objects.latest('id')
+        last_request = RequestHistory.objects\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                               reverse('hello:ajax_count')])\
+            .latest('id')
+
         data = {'requests': [ob.as_json() for ob in requests],
                 'count': requests.count(),
                 'last_request': last_request.id}
