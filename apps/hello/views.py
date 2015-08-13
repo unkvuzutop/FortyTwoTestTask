@@ -1,5 +1,6 @@
 import json
 import logging
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.views.decorators.csrf import csrf_protect
@@ -20,6 +21,8 @@ def user_detail(request):
 
 def request_list(request):
     latest_requests = RequestHistory.objects\
+        .exclude(path__in=[reverse('hello:ajax_update'),
+                           reverse('hello:ajax_count')])\
         .order_by('-date')[:10]
     last_request = RequestHistory.objects.latest('id')
 
@@ -36,18 +39,20 @@ def ajax_update(request):
             result = RequestHistory.objects\
                 .filter(id__in=viewed_request_id.split(','))\
                 .update(is_viewed=True)
-            if not result:
-                    return HttpResponse('{"response": "Nothing to update"}',
-                                        content_type='application/json')
         except Exception as e:
             logging.info('can\'t update object')
             logging.error(e)
-            return HttpResponse('{"response": "False"}',
+            return HttpResponse(json.dumps({'response': 'False'}),
                                 content_type='application/json')
 
-        return HttpResponse('{"response": "OK"}',
-                            content_type='application/json')
-    return HttpResponse('{"response": "False"}',
+        if result:
+            return HttpResponse(json.dumps({'response': 'OK'}),
+                                content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'response':
+                                            'Nothing to update'}),
+                                content_type='application/json')
+    return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
 
 
@@ -64,6 +69,6 @@ def ajax_count(request):
                 'count': requests.count(),
                 'last_request': last_request.id}
 
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    return HttpResponse('{"response": "False"}',
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')

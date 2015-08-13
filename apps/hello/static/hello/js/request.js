@@ -55,10 +55,10 @@ function renderResponse(response) {
     title = title.slice(' ', 10);
     if (title[0] == '|') {
         document.title = response.count;
-        document.title +=  ' New Request ' + titleString;
+        document.title +=  ' New Requests ' + titleString;
     } else {
         document.title = response.count + $('.unreaded').length;
-        document.title +=  ' New Request ' + titleString;
+        document.title +=  ' New Requests ' + titleString;
     }
     $.each(response.requests, function(key,requestObj) {
         var tableRow = '';
@@ -75,5 +75,5 @@ function renderResponse(response) {
 
 }
 
-getNewRequests();
+//getNewRequests();
 setInterval(getNewRequests, 10000);
