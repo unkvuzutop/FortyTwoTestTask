@@ -44,9 +44,9 @@ def request_list(request):
             latest_requests_count += 1
 
     return render(request, 'hello/requests.html',
-                              {'latest_requests': latest_requests,
-                               'last_request': last_request,
-                               'latest_requests_count': latest_requests_count})
+                  {'latest_requests': latest_requests,
+                   'last_request': last_request,
+                   'latest_requests_count': latest_requests_count})
 
 
 class PersonEdit(UpdateView):
