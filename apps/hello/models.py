@@ -59,7 +59,7 @@ class RequestHistory(models.Model):
     host = models.CharField(max_length=100)
     method = models.CharField(max_length=20)
     ip = models.GenericIPAddressField()
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     is_viewed = models.BooleanField(default=False)
 
     def __unicode__(self):

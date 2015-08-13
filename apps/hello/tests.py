@@ -181,22 +181,26 @@ class RequestsPageTests(TestCase):
         response = self.client.post(reverse('hello:ajax_update'),
                                     {'viewed': 0}, **self.kwargs)
         self.assertEqual(response.content,
-                         '{"response": "Nothing to update"}')
+                         json.dumps({'response': 'Nothing to update'}))
 
-        test_request = RequestHistory.objects.latest('id')
+        self.client.get('hello:home')
+        test_request = RequestHistory.objects\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                               reverse('hello:ajax_count')])\
+            .latest('id')
 
         self.assertEqual(test_request.is_viewed, False)
         response = self.client.post(reverse('hello:ajax_update'),
                                     {'viewed': test_request.id},
                                     **self.kwargs)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, '{"response": "OK"}')
+        self.assertEqual(response.content, json.dumps({'response': 'OK'}))
 
         test_request = RequestHistory.objects.get(pk=test_request.id)
         self.assertEqual(test_request.is_viewed, True)
 
         response = self.client.get(reverse('hello:ajax_update'))
-        self.assertEqual(response.content, '{"response": "False"}')
+        self.assertEqual(response.content, json.dumps({'response': 'False'}))
 
     def test_ajax_count_view(self):
         """
@@ -204,19 +208,49 @@ class RequestsPageTests(TestCase):
         check last request in response is real last response
         check response if request not ajax request
         """
+        self.client.get(reverse('hello:requests'))
+
         response = self.client.post(reverse('hello:ajax_count'),
                                     {'last_loaded_id': 0},
                                     **self.kwargs)
+
         response_data = json.loads(response.content)
 
-        get_requests_count = RequestHistory.objects.count()
-        get_lastes_request = RequestHistory.objects.latest('id')
+        get_requests_count = RequestHistory.objects\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                               reverse('hello:ajax_count')])\
+            .count()
+        get_lastes_request = RequestHistory.objects\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                               reverse('hello:ajax_count')])\
+            .latest('id')
+
         self.assertEqual(response_data['count'], get_requests_count)
         self.assertEqual(response_data['last_request'], get_lastes_request.id)
-
         response = self.client.get(reverse('hello:ajax_count'))
 
         self.assertEqual(response.content, '{"response": "False"}')
+
+        self.assertEqual(response.content, json.dumps({'response': 'False'}))
+
+    def test_ten_latest_requests_on_page(self):
+        """
+        make eleven requests and check:
+            - check the first request from the array is not on the page
+            - check latest nine (9) request from on the page
+                and current request (1) also on the page
+        """
+        requests = ['/test/request/'+str(i) for i in range(0, 10)]
+
+        for request in requests:
+            self.client.get(request)
+        response = self.client.get(reverse('hello:requests'))
+
+        self.assertNotIn(requests[0], response.content)
+
+        for request in requests[1:]:
+            self.assertIn(request, response.content)
+        self.assertIn(reverse('hello:requests'), response.content)
 
 
 class EditPageTests(TestCase):
