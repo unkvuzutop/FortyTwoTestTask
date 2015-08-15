@@ -4,7 +4,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 
-class User(models.Model):
+class Profile(models.Model):
     name = models.CharField(blank=False, max_length=50)
     last_name = models.CharField(blank=False, max_length=50)
     date_of_birth = models.DateField()
@@ -59,7 +59,7 @@ class RequestHistory(models.Model):
     host = models.CharField(max_length=100)
     method = models.CharField(max_length=20)
     ip = models.GenericIPAddressField()
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     is_viewed = models.BooleanField(default=False)
 
     def __unicode__(self):
