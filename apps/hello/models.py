@@ -46,7 +46,7 @@ class Profile(models.Model):
                                                       'image/jpeg',
                                                       output.len,
                                                       None)
-        super(User, self).save(*args, **kwargs)
+        super(Profile, self).save(*args, **kwargs)
 
     def admin_preview(self):
         return '<a href="/uploads/{0}"><img src="/uploads/{0}"></a>'.\

@@ -54,7 +54,7 @@ class PersonEdit(UpdateView):
     success_url = reverse_lazy('hello:user_edit')
 
     def get_object(self):
-        object = Profile.objects.get(email=settings.ADMIN_EMAIL)
+        object = get_object_or_404(Profile, email=settings.ADMIN_EMAIL)
         return object
 
     @method_decorator(login_required)

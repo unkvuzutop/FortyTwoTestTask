@@ -254,34 +254,54 @@ class EditPageTests(TestCase):
     def setUp(self):
             self.kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
 
+    def auth_user(self):
+        self.client.login(username='admin', password='admin')
+
     def test_edit_page_access(self):
         """
         1) check login required for edit page
         2) check page is available after login
-        3) check response after update form
-        4) check response if request in not Ajax
-        5) check response if one from required fields
-            doesn't given in form_data
         """
         response = self.client.get(reverse('hello:user_edit'))
         self.assertEqual(response.status_code, 302)
 
-        self.client.login(username='admin', password='admin')
+        self.auth_user()
 
         response = self.client.get(reverse('hello:user_edit'))
         self.assertEqual(response.status_code, 200)
 
+    def test_update_form(self):
+        """
+        1) check response after update form
+        2) check response if request in not Ajax
+        3) check response if one of required fields is empty in update request
+        4) check response if form not valid
+        """
+        self.auth_user()
+        test_date = datetime.strftime(datetime.now(),'%Y-%m-%d')
         form_data = dict(name='name', last_name='last name',
-                         date_of_birth=datetime.strftime(datetime.now(),
-                                                         '%Y-%m-%d'),
+                         date_of_birth=test_date,
                          bio='some Bio', email=settings.ADMIN_EMAIL,
-                         jabber='jabber', skype='skype',
-                         other_contacts='other contacts')
+                         jabber=' test jabber', skype='test skype',
+                         other_contacts='my other contacts')
 
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
 
         self.assertEqual(response.status_code, 200)
+
+        self.assertIn('name', response.content)
+        self.assertIn('last name', response.content)
+        self.assertIn(test_date,
+                      response.content)
+        self.assertIn('some Bio', response.content)
+        self.assertIn('test jabber', response.content)
+        self.assertIn('test skype', response.content)
+        self.assertIn('my other contacts', response.content)
+
+        self.assertNotIn('This field is required.', response.content)
+        self.assertNotIn('Enter a valid', response.content)
+
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data)
 
@@ -291,3 +311,86 @@ class EditPageTests(TestCase):
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
         self.assertEqual(response.status_code, 400)
+        self.assertIn('This field is required.', response.content)
+        self.assertIn('email', response.content)
+
+        form_data['date_of_birth'] = '0000-00-00'
+        response = self.client.post(reverse('hello:user_edit'),
+                                    form_data, **self.kwargs)
+        self.assertIn('This field is required.', response.content)
+        self.assertIn('date_of_birth', response.content)
+
+    def test_two_object_in_db(self):
+        """
+        check right data on edit page if 2 users in database
+        """
+        Profile.objects.create(name=u'Сергій',
+                               last_name=u'Благун',
+                               bio=u'інша біографія',
+                               email=u'sergey.other@gmail.com',
+                               jabber=u'unkvuzutop@khavr.com',
+                               skype=u'unkvuzutop1',
+                               date_of_birth=u'1999-08-08',
+                               other_contacts=u'other contacts')
+
+        users = Profile.objects.count()
+        self.assertGreaterEqual(users, 2)
+
+        self.auth_user()
+
+        response = self.client.get(reverse('hello:user_edit'))
+
+        self.assertIn('Сергей', response.content)
+        self.assertIn('Благун', response.content)
+        self.assertIn('sergey.drower@gmail.com', response.content)
+        self.assertIn('unkvuzutop@khavr.com', response.content)
+        self.assertIn('unkvuzutop', response.content)
+        self.assertIn('some additional info', response.content)
+        self.assertIn('my other contacts', response.content)
+        self.assertIn('1987-04-04', response.content)
+
+        self.assertNotIn('Сергій', response.context)
+        self.assertNotIn('Благун', response.context)
+        self.assertNotIn('інша біографія', response.context)
+        self.assertNotIn('sergey.other@gmail.com', response.context)
+        self.assertNotIn('unkvuzutop@khavr.com', response.context)
+        self.assertNotIn('unkvuzutop1', response.context)
+        self.assertNotIn('1999-08-08', response.context)
+        self.assertNotIn('other contacts', response.context)
+
+    def test_edit_page_with_unicode(self):
+        """
+        test edit page with unicode data
+        """
+        Profile.objects.all().delete()
+        Profile.objects.create(name=u'Сергій',
+                               last_name=u'Благун',
+                               bio=u'інша біографія',
+                               email=u'sergey.drower@gmail.com',
+                               jabber=u'unkvuzutop@khavr.com',
+                               skype=u'unkvuzutop',
+                               date_of_birth=u'1999-08-08',
+                               other_contacts=u'other contacts')
+
+        self.auth_user()
+
+        response = self.client.get(reverse('hello:user_edit'))
+        self.assertIn('Сергій', response.content)
+        self.assertIn('Благун', response.content)
+        self.assertIn('sergey.drower@gmail.com', response.content)
+        self.assertIn('unkvuzutop@khavr.com', response.content)
+        self.assertIn('unkvuzutop', response.content)
+        self.assertIn('інша біографія', response.content)
+        self.assertIn('other contacts', response.content)
+        self.assertIn('1999-08-08', response.content)
+
+    def test_edit_page_with_empty_user(self):
+        """
+        check edit page if user doesn't exist
+        """
+        Profile.objects.all().delete()
+        self.auth_user()
+        response = self.client.get(reverse('hello:user_edit'))
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('Page Not Found', response.content)
+
