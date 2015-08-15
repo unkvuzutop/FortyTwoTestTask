@@ -13,7 +13,7 @@ class CatchRequest(object):
         try:
             request_row.save()
         except:
-            logging.error('cant\t save request object')
+            logging.error('Error while saving the request to the server')
 
     def process_request(self, request):
         self.save_request(request)

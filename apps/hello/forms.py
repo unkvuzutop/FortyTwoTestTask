@@ -1,5 +1,5 @@
 from django import forms
-from apps.hello.models import User
+from apps.hello.models import Profile
 
 
 class UserEditForm(forms.ModelForm):
@@ -7,7 +7,7 @@ class UserEditForm(forms.ModelForm):
     photo_preview = forms.ImageField(required=False)
 
     class Meta(object):
-        model = User
+        model = Profile
         fields = ('name',
                   'last_name',
                   'date_of_birth',
