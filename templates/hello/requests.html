@@ -2,7 +2,7 @@
 
 {% load staticfiles %}
 
-{% block title %} {{ latest_requsts|length }} {% endblock title %}
+{% block title %} {{ latest_requests_count }} {% endblock title %}
 
 {% block extra_head %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -42,7 +42,7 @@
                             </td>
                         </tr>
                     {% empty %}
-                        <tr>Haven't requests yet</tr>
+                        <tr>No requests yet</tr>
                     {% endfor %}
                 </tbody>
             </table>

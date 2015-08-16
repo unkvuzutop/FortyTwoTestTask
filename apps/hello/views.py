@@ -4,16 +4,16 @@ import json
 import logging
 import time
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
+from django.core.urlresolvers import reverse_lazy, reverse
+from django.http import HttpResponseBadRequest, HttpResponse
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
 from apps.hello.forms import UserEditForm
 from apps.hello.models import Profile, RequestHistory
 
-from fortytwo_test_task import settings
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,23 @@ def user_detail(request):
 
 def request_list(request):
     latest_requests = RequestHistory.objects\
+        .exclude(path__in=[reverse('hello:ajax_update'),
+                           reverse('hello:ajax_count')])\
         .order_by('-date')[:10]
-    last_request = RequestHistory.objects.latest('id')
+    last_request = RequestHistory.objects\
+        .exclude(path__in=[reverse('hello:ajax_update'),
+                           reverse('hello:ajax_count')])\
+        .latest('id')
 
-    return render(request, 'hello/requests.html',
-                  {'latest_requests': latest_requests,
-                   'last_request': last_request})
+    latest_requests_count = 0
+    for request in latest_requests:
+        if not request.is_viewed:
+            latest_requests_count += 1
+
+    return render_to_response('hello/requests.html',
+                              {'latest_requests': latest_requests,
+                               'last_request': last_request,
+                               'latest_requests_count': latest_requests_count})
 
 
 class PersonEdit(UpdateView):
@@ -41,7 +52,7 @@ class PersonEdit(UpdateView):
     success_url = reverse_lazy('hello:user_edit')
 
     def get_object(self):
-        object = Profile.objects.get(email=settings.ADMIN_EMAIL)
+        object = get_object_or_404(Profile, email=settings.ADMIN_EMAIL)
         return object
 
     @method_decorator(login_required)
@@ -74,19 +85,23 @@ def ajax_update(request):
         try:
             result = RequestHistory.objects\
                 .filter(id__in=viewed_request_id.split(','))\
+                .exclude(path__in=[reverse('hello:ajax_update'),
+                         reverse('hello:ajax_count')])\
                 .update(is_viewed=True)
-            if not result:
-                    return HttpResponse('{"response": "Nothing to update"}',
-                                        content_type='application/json')
         except Exception as e:
             logging.info('can\'t update object')
             logging.error(e)
-            return HttpResponse('{"response": "False"}',
+            return HttpResponse(json.dumps({'response': 'False'}),
                                 content_type='application/json')
 
-        return HttpResponse('{"response": "OK"}',
-                            content_type='application/json')
-    return HttpResponse('{"response": "False"}',
+        if result:
+            return HttpResponse(json.dumps({'response': 'OK'}),
+                                content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'response':
+                                            'Nothing to update'}),
+                                content_type='application/json')
+    return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
 
 
@@ -96,13 +111,19 @@ def ajax_count(request):
         requests = RequestHistory.objects\
             .filter(id__gt=request.POST['last_loaded_id'])\
             .filter(is_viewed=False)\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                     reverse('hello:ajax_count')])\
             .all()
 
-        last_request = RequestHistory.objects.latest('id')
+        last_request = RequestHistory.objects\
+            .exclude(path__in=[reverse('hello:ajax_update'),
+                               reverse('hello:ajax_count')])\
+            .latest('id')
+
         data = {'requests': [ob.as_json() for ob in requests],
                 'count': requests.count(),
                 'last_request': last_request.id}
 
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    return HttpResponse('{"response": "False"}',
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
