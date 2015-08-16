@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.hello.models import User, RequestHistory, EventHistory
+from apps.hello.models import Profile, RequestHistory, EventHistory
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -28,6 +28,6 @@ class RequestHistoryAdmin(admin.ModelAdmin):
 class EventHistoryAdmin(admin.ModelAdmin):
     list_display = ('model', 'event', 'date')
 
-admin.site.register(User, UserAdmin)
+admin.site.register(Profile, UserAdmin)
 admin.site.register(RequestHistory, RequestHistoryAdmin)
 admin.site.register(EventHistory, EventHistoryAdmin)

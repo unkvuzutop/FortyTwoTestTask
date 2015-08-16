@@ -5,7 +5,7 @@ from django.template import Template, Context
 from django.test import TestCase
 
 
-from apps.hello.models import User, RequestHistory
+from apps.hello.models import Profile, RequestHistory
 from apps.hello.templatetags.admin_tags import admin_url
 from fortytwo_test_task import settings
 
@@ -22,7 +22,7 @@ class HomePageTests(TestCase):
         """
         check user with ADMIN_EMAIL is unique
         """
-        user = User.objects.filter(email=settings.ADMIN_EMAIL).count()
+        user = Profile.objects.filter(email=settings.ADMIN_EMAIL).count()
         self.assertEqual(user, 1)
         self.assertNotEqual(user, 0)
 
@@ -38,7 +38,7 @@ class HomePageTests(TestCase):
         """
         check personal info in DB  and data structure
         """
-        user = User.objects.filter(email=settings.ADMIN_EMAIL).first()
+        user = Profile.objects.filter(email=settings.ADMIN_EMAIL).first()
         self.assertIsNotNone(user)
 
         self.assertIn('name', user.__dict__)
@@ -200,7 +200,7 @@ class TemplateTagTest(TestCase):
         render template for template tag and compare
         result from template and result from tag method
         """
-        user = User.objects.get(email=settings.ADMIN_EMAIL)
+        user = Profile.objects.get(email=settings.ADMIN_EMAIL)
 
         tag_template = self.render_template(
             '{% load admin_tags %}{% admin_url user %}',

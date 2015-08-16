@@ -6,7 +6,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 
-class User(models.Model):
+class Profile(models.Model):
     name = models.CharField(blank=False, max_length=50)
     last_name = models.CharField(blank=False, max_length=50)
     date_of_birth = models.DateField()
@@ -48,7 +48,7 @@ class User(models.Model):
                                                       'image/jpeg',
                                                       output.len,
                                                       None)
-        super(User, self).save(*args, **kwargs)
+        super(Profile, self).save(*args, **kwargs)
 
     def admin_preview(self):
         return '<a href="/uploads/{0}"><img src="/uploads/{0}"></a>'.\
@@ -91,9 +91,9 @@ class EventHistory(models.Model):
         return self.model
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=Profile)
 @receiver(post_save, sender=RequestHistory)
-@receiver(post_delete, sender=User)
+@receiver(post_delete, sender=Profile)
 @receiver(post_delete, sender=RequestHistory)
 def my_handler(sender, **kwargs):
     history = EventHistory(related_id=kwargs['instance'].id,

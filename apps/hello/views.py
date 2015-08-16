@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
 from apps.hello.forms import UserEditForm
-from apps.hello.models import User, RequestHistory
+from apps.hello.models import Profile, RequestHistory
 
 from fortytwo_test_task import settings
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def user_detail(request):
-    person = get_object_or_404(User, email=settings.ADMIN_EMAIL)
+    person = get_object_or_404(Profile, email=settings.ADMIN_EMAIL)
     logger.info('Get user object')
     logger.debug(person)
     return render(request, 'hello/user_detail.html', {'person': person})
@@ -36,12 +36,12 @@ def request_list(request):
 
 
 class PersonEdit(UpdateView):
-    model = User
+    model = Profile
     form_class = UserEditForm
     success_url = reverse_lazy('hello:user_edit')
 
     def get_object(self):
-        object = User.objects.get(email=settings.ADMIN_EMAIL)
+        object = Profile.objects.get(email=settings.ADMIN_EMAIL)
         return object
 
     @method_decorator(login_required)
