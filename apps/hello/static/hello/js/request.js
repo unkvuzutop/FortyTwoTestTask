@@ -51,6 +51,15 @@ function getNewRequests() {
 }
 
 function renderResponse(response) {
+    var title = document.title;
+    title = title.slice(' ', 10);
+    if (title[0] == '|') {
+        document.title = response.count;
+        document.title +=  ' New Requests ' + titleString;
+    } else {
+        document.title = response.count + $('.unreaded').length;
+        document.title +=  ' New Requests ' + titleString;
+    }
     $.each(response.requests, function(key,requestObj) {
         var tableRow = '';
         tableRow += '<tr class="request  unreaded" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
@@ -64,16 +73,6 @@ function renderResponse(response) {
 
     document.getElementById('requests-table').setAttribute('data-last-id', response.last_request);
 
-    var title = document.title;
-    title = title.slice(' ', 10);
-    if (title[0] == '|') {
-        document.title = response.count;
-        document.title +=  ' New Request | 42-unkvuzutop-test';
-    } else {
-        document.title = response.count + $('.unreaded').length-1;
-        document.title +=  ' New Request ' + titleString;
-    }
 }
 
-getNewRequests();
 setInterval(getNewRequests, 10000);
