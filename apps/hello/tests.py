@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 from datetime import datetime
+import os
+from PIL import Image
+from StringIO import StringIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
@@ -278,7 +282,7 @@ class EditPageTests(TestCase):
         4) check response if form not valid
         """
         self.auth_user()
-        test_date = datetime.strftime(datetime.now(),'%Y-%m-%d')
+        test_date = datetime.strftime(datetime.now(), '%Y-%m-%d')
         form_data = dict(name='name', last_name='last name',
                          date_of_birth=test_date,
                          bio='some Bio', email=settings.ADMIN_EMAIL,
@@ -394,3 +398,33 @@ class EditPageTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertIn('Page Not Found', response.content)
 
+    def test_image(self):
+        """
+        check image saving and checking whether generated previews
+        """
+        profile = Profile.objects.get(email=getattr(settings,
+                                                    'ADMIN_EMAIL'))
+
+        image = Image.open(StringIO(os.path.join(
+            getattr(settings, 'BASE_DIR'), 'assets', 'img', 'test_img.jpg'))
+            .read())
+
+        output = StringIO()
+        image.save(output, format='JPEG', quality=75)
+
+        output.seek(0)
+        profile.photo = InMemoryUploadedFile(output,
+                                             None,
+                                             'test.jpg',
+                                             'image/jpeg',
+                                             output.len,
+                                             None)
+        profile.save()
+        profile = Profile.objects.get(email=getattr(settings,
+                                                    'ADMIN_EMAIL'))
+
+        self.assertTrue(profile.photo_preview.width <= 200)
+        self.assertTrue(profile.photo_preview.height <= 200)
+
+        self.assertTrue(profile.photo_preview.path)
+        self.assertTrue(profile.photo.path)
