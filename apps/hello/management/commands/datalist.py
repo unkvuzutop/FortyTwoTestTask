@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
         for model in get_models(app):
             try:
-                message = 'Model name - {0}, had {1} objects'\
+                message = 'Model name - {0}, has {1} objects'\
                     .format(model.__name__, model.objects.count())
             except Exception as e:
                 self.stdout.write(e)
