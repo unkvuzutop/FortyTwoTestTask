@@ -12,6 +12,8 @@ urlpatterns = [
 
     url(r'^requests$', views.request_list, name='requests'),
     url(r'^api/v1/update$', views.ajax_update, name='ajax_update'),
+    url(r'^api/v1/update/priority$', views.ajax_update_priority,
+        name='ajax_update_priority'),
     url(r'^api/v1/count', views.ajax_count, name='ajax_count'),
 
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),

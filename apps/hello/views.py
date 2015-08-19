@@ -29,10 +29,14 @@ def user_detail(request):
 
 
 def request_list(request):
+    args =['-date']
+    if 'order' in request.GET:
+        args.append('-'+request.GET['order'])
+
     latest_requests = RequestHistory.objects\
         .exclude(path__in=[reverse('hello:ajax_update'),
                            reverse('hello:ajax_count')])\
-        .order_by('-date')[:10]
+        .order_by(*args[::-1])[:10]
     last_request = RequestHistory.objects\
         .exclude(path__in=[reverse('hello:ajax_update'),
                            reverse('hello:ajax_count')])\
@@ -130,3 +134,37 @@ def ajax_count(request):
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
+
+
+def ajax_update_priority(request):
+    if request.is_ajax() \
+            and 'priority' in request.POST\
+            and 'request_id' in request.POST:
+
+            try:
+                RequestHistory.objects\
+                    .filter(id=request.POST['request_id'])\
+                    .update(priority=request.POST['priority'])
+            except Exception as e:
+                print(e)
+            return HttpResponse(json.dumps({'response': 'OK'}),
+                                content_type='application/json')
+        # requests = RequestHistory.objects\
+        #     .filter(id__gt=request.POST['last_loaded_id'])\
+        #     .filter(is_viewed=False)\
+        #     .exclude(path__in=[reverse('hello:ajax_update'),
+        #              reverse('hello:ajax_count')])\
+        #     .all()
+        #
+        # last_request = RequestHistory.objects\
+        #     .exclude(path__in=[reverse('hello:ajax_update'),
+        #                        reverse('hello:ajax_count')])\
+        #     .latest('id')
+        #
+        # data = {'requests': [ob.as_json() for ob in requests],
+        #         'count': requests.count(),
+        #         'last_request': last_request.id}
+
+        # return HttpResponse(json.dumps(data), content_type='application/json')
+    # return HttpResponse(json.dumps({'response': 'False'}),
+    #                     content_type='application/json')

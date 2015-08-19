@@ -11,6 +11,15 @@
 
 {% block content %}
     <div class="row">
+        <div class="col-lg-11"></div>
+        <div class="col-lg-1">
+{#           <button type="button" class="btn btn-primary order" data-toggle="button">Primary</button>#}
+            <a class="btn btn-primary" type="button" href="{% url 'hello:requests' %}">Order by Date</a>
+            <a class="btn btn-primary" type="button" href="{% url 'hello:requests' %}?order=priority">Order by Priority
+            </a>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <table class="table table-bordered text-center" id="requests-table" data-last-id="{{ last_request.id }}">
                 <thead>
@@ -20,6 +29,7 @@
                     <td class="col-lg-2">Date</td>
                     <td class="col-lg-2">IP</td>
                     <td class="col-lg-2">Host requested</td>
+                    <td class="col-lg-2">Priority</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,13 +42,21 @@
                                 {{ request.path }}
                             </td>
                             <td>
-                                {{ request.date|date:'Y-m-d h:m:s' }}
+                                {{ request.date|date:'Y-m-d h:i:s' }}
                             </td>
                             <td>
                                 {{ request.ip }}
                             </td>
                             <td>
                                 {{ request.host }}
+                            </td>
+                            <td>
+                                <div class="col-xs-9 selectContainer">
+                                    <select name="priority" class="form-control priority" id="priority" data-request-id="{{ request.id }}">
+                                        <option value="0" {% if request.priority == 0 %}selected{% endif %}>Casual</option>
+                                        <option value="1" {% if request.priority == 1 %}selected{% endif %}>Important</option>
+                                    </select>
+                                </div>
                             </td>
                         </tr>
                     {% empty %}
@@ -49,5 +67,6 @@
         </div>
     </div>
     <script src="{% static 'hello/js/request.js' %}"></script>
+    <script src="{% static 'hello/js/priority.js' %}"></script>
 {% endblock content %}
 
