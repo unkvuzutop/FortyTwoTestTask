@@ -25,7 +25,19 @@ class Migration(SchemaMigration):
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'other_contacts': ('django.db.models.fields.TextField', [], {}),
+            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'photo_preview': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'skype': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'blank': 'True'})
+        },
+        u'hello.requesthistory': {
+            'Meta': {'object_name': 'RequestHistory'},
+            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'host': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip': ('django.db.models.fields.GenericIPAddressField', [], {'max_length': '39'}),
+            'is_viewed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'method': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'path': ('django.db.models.fields.CharField', [], {'max_length': '2000'})
         }
     }
 
