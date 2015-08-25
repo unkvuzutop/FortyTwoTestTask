@@ -14,7 +14,7 @@ $.ajaxSetup({
     }
 });
 
-$('.table').on('click', function () {
+$(window).on('focus blur', function () {
     var newRequests = [];
 
     var newRows = $("#requests-table").find("tr");
@@ -52,13 +52,16 @@ function getNewRequests() {
 
 function renderResponse(response) {
     var title = document.title;
+    var unreadedOnPage = $('.unreaded').length;
     title = title.slice(' ', 10);
-    if (title[0] == '|') {
-        document.title = response.count;
-        document.title +=  ' New Requests ' + titleString;
-    } else {
-        document.title = response.count + $('.unreaded').length;
-        document.title +=  ' New Requests ' + titleString;
+    if (response.count != 0 || unreadedOnPage != 0 ) {
+        if (title[0] == '|') {
+            document.title = response.count;
+            document.title +=  ' New Requests ' + titleString;
+        } else {
+            document.title = response.count + unreadedOnPage;
+            document.title +=  ' New Requests ' + titleString;
+        }
     }
     $.each(response.requests, function(key,requestObj) {
         var tableRow = '';
@@ -75,4 +78,4 @@ function renderResponse(response) {
 
 }
 
-setInterval(getNewRequests, 10000);
+setInterval(getNewRequests, 4500);
