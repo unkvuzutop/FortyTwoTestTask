@@ -265,6 +265,7 @@ class EditPageTests(TestCase):
         4) check response if request in not Ajax
         5) check response if one from required fields
             doesn't given in form_data
+
         """
         response = self.client.get(reverse('hello:user_edit'))
         self.assertEqual(response.status_code, 302)
