@@ -29,8 +29,9 @@ def user_detail(request):
 
 
 def request_list(request):
-    args =['-date']
-    if 'order' in request.GET:
+    args = ['-date']
+    allowed_ordering = ['priority']
+    if 'order' in request.GET and request.GET['order'] in allowed_ordering:
         args.append('-'+request.GET['order'])
 
     latest_requests = RequestHistory.objects\
@@ -98,7 +99,7 @@ def ajax_update(request):
         except Exception as e:
             logging.info('can\'t update object')
             logging.error(e)
-            return HttpResponse(json.dumps({'response': 'False'}),
+            return HttpResponse(json.dumps({'response': False}),
                                 content_type='application/json')
 
         if result:
@@ -108,7 +109,7 @@ def ajax_update(request):
             return HttpResponse(json.dumps({'response':
                                             'Nothing to update'}),
                                 content_type='application/json')
-    return HttpResponse(json.dumps({'response': 'False'}),
+    return HttpResponse(json.dumps({'response': False}),
                         content_type='application/json')
 
 
@@ -132,7 +133,7 @@ def ajax_count(request):
                 'last_request': last_request.id}
 
         return HttpResponse(json.dumps(data), content_type='application/json')
-    return HttpResponse(json.dumps({'response': 'False'}),
+    return HttpResponse(json.dumps({'response': False}),
                         content_type='application/json')
 
 
@@ -149,6 +150,7 @@ def ajax_update_priority(request):
                 print(e)
             return HttpResponse(json.dumps({'response': 'OK'}),
                                 content_type='application/json')
+    return HttpResponse(json.dumps({'response': False}))
         # requests = RequestHistory.objects\
         #     .filter(id__gt=request.POST['last_loaded_id'])\
         #     .filter(is_viewed=False)\
