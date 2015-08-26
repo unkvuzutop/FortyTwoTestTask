@@ -266,6 +266,7 @@ class RequestsPageTests(TestCase):
         for request in response_data['requests']:
             self.assertEqual(reverse('hello:requests'), request['path'])
 
+
 class EditPageTests(TestCase):
     def setUp(self):
             self.kwargs = {'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
