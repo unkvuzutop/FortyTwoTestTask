@@ -14,7 +14,7 @@ $.ajaxSetup({
     }
 });
 
-$('.table').on('click', function () {
+$(window).on('focus blur', function () {
     var newRequests = [];
 
     var newRows = $("#requests-table").find("tr");
@@ -38,12 +38,11 @@ $('.table').on('click', function () {
 });
 
 function getNewRequests() {
-    var lastLoadedId = document.getElementById('requests-table').getAttribute('data-last-id');
     $.ajax({
         dataType: "json",
         url: '/api/v1/count',
         method: 'POST',
-        data: {last_loaded_id: lastLoadedId},
+        data: {},
         success: function(response) {
             renderResponse(response);
         }
@@ -51,28 +50,34 @@ function getNewRequests() {
 }
 
 function renderResponse(response) {
+    $("#table-body").empty();
     var title = document.title;
+    var unreadedOnPage = $('.unreaded').length;
     title = title.slice(' ', 10);
-    if (title[0] == '|') {
-        document.title = response.count;
-        document.title +=  ' New Requests ' + titleString;
-    } else {
-        document.title = response.count + $('.unreaded').length;
-        document.title +=  ' New Requests ' + titleString;
+    if (response.count != 0 || unreadedOnPage != 0 ) {
+        if (title[0] == '|') {
+            document.title = response.count;
+            document.title +=  ' New Requests ' + titleString;
+        } else {
+            document.title = response.count + unreadedOnPage;
+            document.title +=  ' New Requests ' + titleString;
+        }
     }
     $.each(response.requests, function(key,requestObj) {
+        var unreaded = '';
+        if (requestObj.is_viewed == 0) {
+            unreaded = 'unreaded'
+        }
         var tableRow = '';
-        tableRow += '<tr class="request  unreaded" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
+        tableRow += '<tr class="request  '+unreaded+'" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
         tableRow += '<td>'+requestObj.method+'</td>';
         tableRow += '<td>' + requestObj.path + '</td>';
         tableRow += '<td>'+ requestObj.date + '</td>';
         tableRow += '<td>' + requestObj.ip + '</td>';
         tableRow += '<td>' + requestObj.host + '</td>';
-        $('#requests-table > tbody').prepend(tableRow);
+        $('#requests-table > tbody').append(tableRow);
     });
-
-    document.getElementById('requests-table').setAttribute('data-last-id', response.last_request);
 
 }
 
-setInterval(getNewRequests, 10000);
+setInterval(getNewRequests, 4500);
