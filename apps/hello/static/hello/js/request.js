@@ -38,12 +38,11 @@ $(window).on('focus blur', function () {
 });
 
 function getNewRequests() {
-    var lastLoadedId = document.getElementById('requests-table').getAttribute('data-last-id');
     $.ajax({
         dataType: "json",
         url: '/api/v1/count',
         method: 'POST',
-        data: {last_loaded_id: lastLoadedId},
+        data: {},
         success: function(response) {
             renderResponse(response);
         }
@@ -78,8 +77,6 @@ function renderResponse(response) {
         tableRow += '<td>' + requestObj.host + '</td>';
         $('#requests-table > tbody').append(tableRow);
     });
-
-    document.getElementById('requests-table').setAttribute('data-last-id', response.last_request);
 
 }
 

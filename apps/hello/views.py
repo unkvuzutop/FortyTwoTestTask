@@ -22,13 +22,11 @@ def user_detail(request):
 def request_list(request):
     latest_requests = RequestHistory.objects\
         .order_by('-date')[:10]
-    last_request = RequestHistory.objects.latest('id')
 
     latest_requests_count = get_unreaded_requests_count(latest_requests)
 
     return render_to_response('hello/requests.html',
                               {'latest_requests': latest_requests,
-                               'last_request': last_request,
                                'latest_requests_count': latest_requests_count})
 
 
@@ -61,15 +59,14 @@ def ajax_update(request):
 @csrf_protect
 @exclude_request_tracing
 def ajax_count(request):
-    if request.is_ajax() and 'last_loaded_id' in request.POST:
+    if request.is_ajax():
         requests = RequestHistory.objects\
             .order_by('-date')[:10]
 
         last_request = RequestHistory.objects.latest('id')
 
         data = {'requests': [ob.as_json() for ob in requests],
-                'count': get_unreaded_requests_count(requests),
-                'last_request': last_request.id}
+                'count': get_unreaded_requests_count(requests)}
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
