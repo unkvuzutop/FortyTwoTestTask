@@ -127,7 +127,7 @@ class RequestsPageTests(TestCase):
         requests_count = RequestHistory.objects.count()
         self.assertEqual(len(response.context['latest_requests']),
                          requests_count)
-        self.assertEqual(request.id, response.context['last_request'].id)
+        self.assertIn(getattr(request, 'path'), response.content)
 
     def test_data_on_page(self):
         """
@@ -150,15 +150,6 @@ class RequestsPageTests(TestCase):
         response = self.client.get(reverse('hello:requests'))
         self.assertLessEqual(len(response.context['latest_requests']),
                              test_requests_count)
-
-    def test_right_data_on_page(self):
-        """
-        - make some unique request and check it on request page
-        """
-        test_url = '/sometesturl/'
-        self.client.get(test_url)
-        response = self.client.get(reverse('hello:requests'))
-        self.assertIn(test_url, response.content)
 
     def test_no_requests_in_db(self):
         """
@@ -183,11 +174,9 @@ class RequestsPageTests(TestCase):
         self.assertEqual(response.content,
                          json.dumps({'response': 'Nothing to update'}))
 
-        self.client.get('hello:home')
-        test_request = RequestHistory.objects\
-            .exclude(path__in=[reverse('hello:ajax_update'),
-                               reverse('hello:ajax_count')])\
-            .latest('id')
+        self.client.get(reverse('hello:home'))
+
+        test_request = RequestHistory.objects.latest('id')
 
         self.assertEqual(test_request.is_viewed, False)
         response = self.client.post(reverse('hello:ajax_update'),
@@ -204,29 +193,40 @@ class RequestsPageTests(TestCase):
 
     def test_ajax_count_view(self):
         """
-        check real count of new request
-        check last request in response is real last response
+        make 15 test requests
+        check requests count in DB
+        check ajax response count is equal 10
+        mark some request as viewed and check ajax response (count become 9
+            but objects count still 10)
         check response if request not ajax request
         """
-        self.client.get(reverse('hello:requests'))
+        test_requests_count = 15
+        for request in range(0, 15):
+            self.client.get(reverse('hello:requests'))
 
-        response = self.client.post(reverse('hello:ajax_count'),
-                                    {'last_loaded_id': 0},
+        response = self.client.post(reverse('hello:ajax_count'), {},
                                     **self.kwargs)
 
         response_data = json.loads(response.content)
 
         get_requests_count = RequestHistory.objects\
-            .exclude(path__in=[reverse('hello:ajax_update'),
-                               reverse('hello:ajax_count')])\
+            .filter(is_viewed=False)\
             .count()
-        get_lastes_request = RequestHistory.objects\
-            .exclude(path__in=[reverse('hello:ajax_update'),
-                               reverse('hello:ajax_count')])\
-            .latest('id')
 
-        self.assertEqual(response_data['count'], get_requests_count)
-        self.assertEqual(response_data['last_request'], get_lastes_request.id)
+        self.assertEqual(get_requests_count, test_requests_count)
+        self.assertEqual(response_data['count'], 10)
+
+        last_request = RequestHistory.objects.latest('id')
+        RequestHistory.objects.filter(id=last_request.id)\
+            .update(is_viewed=True)
+
+        response = self.client.post(reverse('hello:ajax_count'), {},
+                                    **self.kwargs)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response_data['count'], 9)
+        self.assertEqual(len(response_data['requests']), 10)
+
         response = self.client.get(reverse('hello:ajax_count'))
 
         self.assertEqual(response.content, '{"response": "False"}')
@@ -236,21 +236,34 @@ class RequestsPageTests(TestCase):
     def test_ten_latest_requests_on_page(self):
         """
         make eleven requests and check:
-            - check the first request from the array is not on the page
-            - check latest nine (9) request from on the page
-                and current request (1) also on the page
+            - check the first request is not on template context
+            - check latest  (10) request on template context and their data
+                on the page
         """
-        requests = ['/test/request/'+str(i) for i in range(0, 10)]
-
-        for request in requests:
-            self.client.get(request)
+        self.client.get(reverse('hello:home'))
+        for request in range(1, 10):
+            self.client.get(reverse('hello:requests'))
         response = self.client.get(reverse('hello:requests'))
 
-        self.assertNotIn(requests[0], response.content)
-
-        for request in requests[1:]:
-            self.assertIn(request, response.content)
+        for request in response.context['latest_requests']:
+            self.assertEqual(reverse('hello:requests'), request.path)
         self.assertIn(reverse('hello:requests'), response.content)
+
+    def test_ten_latest_request_from_ajax(self):
+        """
+        make eleven requests and check:
+            - check the first request  is not on the response
+            - check latest  (10) request in the response
+        """
+        self.client.get(reverse('hello:home'))
+        for request in range(0, 10):
+            self.client.get(reverse('hello:requests'))
+        response = self.client.post(reverse('hello:ajax_count'), {},
+                                    **self.kwargs)
+        response_data = json.loads(response.content)
+
+        for request in response_data['requests']:
+            self.assertEqual(reverse('hello:requests'), request['path'])
 
 
 class EditPageTests(TestCase):
@@ -295,3 +308,4 @@ class EditPageTests(TestCase):
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
         self.assertEqual(response.status_code, 400)
+

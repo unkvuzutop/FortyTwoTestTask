@@ -38,12 +38,11 @@ $(window).on('focus blur', function () {
 });
 
 function getNewRequests() {
-    var lastLoadedId = document.getElementById('requests-table').getAttribute('data-last-id');
     $.ajax({
         dataType: "json",
         url: '/api/v1/count',
         method: 'POST',
-        data: {last_loaded_id: lastLoadedId},
+        data: {},
         success: function(response) {
             renderResponse(response);
         }
@@ -51,6 +50,7 @@ function getNewRequests() {
 }
 
 function renderResponse(response) {
+    $("#table-body").empty();
     var title = document.title;
     var unreadedOnPage = $('.unreaded').length;
     title = title.slice(' ', 10);
@@ -64,17 +64,19 @@ function renderResponse(response) {
         }
     }
     $.each(response.requests, function(key,requestObj) {
+        var unreaded = '';
+        if (requestObj.is_viewed == 0) {
+            unreaded = 'unreaded'
+        }
         var tableRow = '';
-        tableRow += '<tr class="request  unreaded" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
+        tableRow += '<tr class="request  '+unreaded+'" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
         tableRow += '<td>'+requestObj.method+'</td>';
         tableRow += '<td>' + requestObj.path + '</td>';
         tableRow += '<td>'+ requestObj.date + '</td>';
         tableRow += '<td>' + requestObj.ip + '</td>';
         tableRow += '<td>' + requestObj.host + '</td>';
-        $('#requests-table > tbody').prepend(tableRow);
+        $('#requests-table > tbody').append(tableRow);
     });
-
-    document.getElementById('requests-table').setAttribute('data-last-id', response.last_request);
 
 }
 
