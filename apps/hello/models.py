@@ -72,4 +72,5 @@ class RequestHistory(models.Model):
             host=self.host,
             method=self.method,
             ip=self.ip,
-            date=self.date.strftime('%Y-%m-%d %H:%M:%S'))
+            date=self.date.strftime('%Y-%m-%d %H:%M:%S'),
+            is_viewed=self.is_viewed)
