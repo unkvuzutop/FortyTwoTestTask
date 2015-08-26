@@ -19,7 +19,7 @@
                     <td class="col-lg-2">Host requested</td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body">
                     {% for request in latest_requests %}
                         <tr class="request {% if request.is_viewed %}readed{% else %} unreaded{% endif %}"  id="request_{{ request.id }}" data-id="{{ request.id }}" >
                             <td>
