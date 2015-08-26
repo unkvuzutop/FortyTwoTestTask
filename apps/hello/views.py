@@ -63,8 +63,6 @@ def ajax_count(request):
         requests = RequestHistory.objects\
             .order_by('-date')[:10]
 
-        last_request = RequestHistory.objects.latest('id')
-
         data = {'requests': [ob.as_json() for ob in requests],
                 'count': get_unreaded_requests_count(requests)}
         return HttpResponse(json.dumps(data), content_type='application/json')
