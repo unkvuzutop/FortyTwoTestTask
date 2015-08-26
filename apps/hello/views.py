@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator

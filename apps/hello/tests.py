@@ -308,4 +308,3 @@ class EditPageTests(TestCase):
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
         self.assertEqual(response.status_code, 400)
-
