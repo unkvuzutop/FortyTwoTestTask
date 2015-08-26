@@ -12,7 +12,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-bordered text-center" id="requests-table" data-last-id="{{ last_request.id }}">
+            <table class="table table-bordered text-center" id="requests-table">
                 <thead>
                 <tr>
                     <td class="col-lg-2">Type</td>
@@ -22,7 +22,7 @@
                     <td class="col-lg-2">Host requested</td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body">
                     {% for request in latest_requests %}
                         <tr class="request {% if request.is_viewed %}readed{% else %} unreaded{% endif %}"  id="request_{{ request.id }}" data-id="{{ request.id }}" >
                             <td>
