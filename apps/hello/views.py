@@ -5,12 +5,14 @@ import logging
 import time
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
+from django.http import HttpResponse
 
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
+
 from apps.hello.forms import UserEditForm
 from apps.hello.models import Profile, RequestHistory
 from apps.hello.middleware import exclude_request_tracing
@@ -45,7 +47,7 @@ class PersonEdit(UpdateView):
     success_url = reverse_lazy('hello:user_edit')
 
     def get_object(self):
-        object = Profile.objects.get(email=settings.ADMIN_EMAIL)
+        object = get_object_or_404(Profile, email=settings.ADMIN_EMAIL)
         return object
 
     @method_decorator(login_required)

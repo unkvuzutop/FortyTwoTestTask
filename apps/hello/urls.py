@@ -2,7 +2,7 @@ from django.conf.urls import url, patterns
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 
-from fortytwo_test_task import settings
+from django.conf import settings
 
 import views
 
