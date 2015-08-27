@@ -1,8 +1,11 @@
 import StringIO
+import logging
 from PIL import Image as Img
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models.signals import post_save, post_delete
+
+logger = logging.getLogger(__name__)
 
 
 class Profile(models.Model):
@@ -106,6 +109,9 @@ def my_handler(sender, **kwargs):
     elif 'created' in kwargs and kwargs['created'] is True:
         history.event = 'insert'
     history.save()
+    logger.info('add models event')
+    logger.debug('made event - {0} with model - {1}'.format(history.event,
+                                                            history.model))
 
 post_save.connect(my_handler)
 post_delete.connect(my_handler)
