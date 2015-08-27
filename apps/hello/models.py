@@ -3,7 +3,6 @@ from PIL import Image as Img
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
 
 
 class Profile(models.Model):
@@ -74,7 +73,8 @@ class RequestHistory(models.Model):
             host=self.host,
             method=self.method,
             ip=self.ip,
-            date=self.date.strftime('%Y-%m-%d %H:%M:%S'))
+            date=self.date.strftime('%Y-%m-%d %H:%M:%S'),
+            is_viewed=self.is_viewed)
 
 
 class EventHistory(models.Model):
@@ -91,11 +91,12 @@ class EventHistory(models.Model):
         return self.model
 
 
-@receiver(post_save, sender=Profile)
-@receiver(post_save, sender=RequestHistory)
-@receiver(post_delete, sender=Profile)
-@receiver(post_delete, sender=RequestHistory)
 def my_handler(sender, **kwargs):
+    if sender._meta.app_label != 'hello':
+        return
+    if sender._meta.model_name == 'eventhistory':
+        return
+
     history = EventHistory(related_id=kwargs['instance'].id,
                            model=kwargs['instance']._meta.db_table)
     if 'created' not in kwargs:
@@ -105,3 +106,6 @@ def my_handler(sender, **kwargs):
     elif 'created' in kwargs and kwargs['created'] is True:
         history.event = 'insert'
     history.save()
+
+post_save.connect(my_handler)
+post_delete.connect(my_handler)
