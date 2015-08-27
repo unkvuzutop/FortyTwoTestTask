@@ -30,7 +30,6 @@ function closeForm() {
 }
 
 function openForm() {
-    document.getElementById('edit-button').style.display = 'none';
     document.getElementById('id_photo').style.display = 'block';
     document.getElementById('id_photo').removeAttribute('disabled');
     document.getElementById('submit').style.display ='block';
@@ -47,21 +46,12 @@ function reset(e) {
     statusString.prepend(baseFormObject.getEinnerHTML);
 }
 
-$('#cancel').on('click', function () {
-    var newRows = $("#contactform").find(".form-control");
-    $.each(newRows, function (key, row) {
-        row.setAttribute('disabled', 'disabled');
-    });
-    document.getElementById('edit-button').style.display = 'block';
-    document.getElementById('submit').style.display ='none';
-    document.getElementById('cancel').style.display ='none';
-});
-
 jQuery(function(ev, da) {
     var form = jQuery("#contactform");
     form.submit(function(e,data) {
+        $("div[id^='error-']").html('');
+        $("input[id^='id_']").removeClass('error-input');
         statusString.empty();
-        document.getElementById('edit-button').style.display = 'none';
         jQuery("#sendbutton").attr('disabled', true);
         statusString.prepend('<span>Sending message, please wait... </span>');
         $.ajax({
@@ -74,13 +64,16 @@ jQuery(function(ev, da) {
                 statusString.empty();
                 statusString.prepend('<span id="success">Profile updated seccesfully</span>');
                 baseFormObject =document.getElementById('contactform');
-                closeForm();
+                openForm();
             },
             error: function(data) {
                 var response = JSON.parse(data.responseText);
                 $.each(response, function (key, value) {
-                    $('#status').html('<span id="form-error" >ERROR:' + key +' : ' + value);
+                    $('#status').html('<span id="form-error" >Form error');
+                    $('#error-'+key).html(value).addClass('error');
+                    $('#id_'+key).addClass('error-input');
                 });
+                openForm();
             }
         });
         e.preventDefault();
@@ -92,10 +85,6 @@ $( document ).ajaxComplete(function() {
     if (submit_status == 'none') {
         document.getElementById('edit-button').style.display = 'block';
     }
-});
-
-$('#edit-button').on('click', function () {
-    openForm()
 });
 
 // bootstrap custom upload file button
