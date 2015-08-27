@@ -5,11 +5,15 @@ import os
 from PIL import Image
 from StringIO import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.management import call_command
 from django.core.urlresolvers import reverse
+from django.template import Template, Context
 from django.test import TestCase
+from django.db import models
 
 from django.conf import settings
-from apps.hello.models import Profile, RequestHistory
+from apps.hello.templatetags.admin_tags import admin_url
+from apps.hello.models import Profile, RequestHistory, EventHistory
 
 
 class PersonalPageTests(TestCase):
@@ -49,6 +53,10 @@ class PersonalPageTests(TestCase):
         """
         test home page with unicode data
         """
+
+        user = Profile.objects.filter(email=settings.ADMIN_EMAIL).first()
+        self.assertIsNotNone(user)
+
         Profile.objects.all().delete()
         Profile.objects.create(name=u'Сергій',
                                last_name=u'Благун',
@@ -330,6 +338,7 @@ class EditPageTests(TestCase):
                                     form_data, **self.kwargs)
         print(response.content)
         self.assertEqual(response.status_code, 400)
+
         self.assertIn('This field is required.', response.content)
         self.assertIn('name', response.content)
 
@@ -443,3 +452,115 @@ class EditPageTests(TestCase):
 
         self.assertTrue(profile.photo_preview.path)
         self.assertTrue(profile.photo.path)
+
+
+class TemplateTagTest(TestCase):
+    def render_template(self, string, context=None):
+        context = context or {}
+        context = Context(context)
+        return Template(string).render(context)
+
+    def test_tag(self):
+        """
+        render template for template tag and compare
+        result from template and result from tag method
+        """
+        user = Profile.objects.get(email=settings.ADMIN_EMAIL)
+
+        tag_template = self.render_template(
+            '{% load admin_tags %}{% admin_url user %}',
+            context={'user': user})
+
+        self.assertEqual(tag_template, admin_url(user))
+
+    def test_tag_without_model_object(self):
+        """
+        try get admin_url without model object
+        """
+        tag_template = self.render_template(
+            '{% load admin_tags %}{% admin_url user %}',
+            context={'user': ''})
+        self.assertEqual(tag_template, '')
+
+
+class DjangoCommandTest(TestCase):
+    def test_output_command(self):
+        """
+        compare command output with template output for stdout and stderr
+        """
+        console_output = StringIO()
+        error_output = StringIO()
+        app = 'hello'
+        call_command('datalist',
+                     app,
+                     stdout=console_output,
+                     stderr=error_output)
+
+        console_output.seek(0)
+        error_output.seek(0)
+
+        for model in models.get_models(app):
+            console_line = console_output.readline()
+            error_line = error_output.readline()
+
+            message = 'Model name - {0}, has {1} objects'\
+                .format(model.__name__, model.objects.count())
+            self.assertEqual(message, console_line)
+            self.assertEqual('error: '+message, error_line)
+
+
+class SignalsTest(TestCase):
+    def events_row_count(self):
+        return EventHistory.objects.count()
+
+    def get_last_object(self):
+        return Profile.objects.latest('id')
+
+    def get_last_event(self):
+        return EventHistory.objects.latest('id')
+
+    def test_create_signal(self):
+        """
+        1) Check EventHistory after create model
+        2) Check EventHistory after update model
+        3) Check EventHistory after delete model
+        """
+        events_count = EventHistory.objects.count()
+        profile = Profile.objects.create(name=u'Сергій',
+                                         last_name=u'Благун',
+                                         bio=u'інша біографія',
+                                         email=u'sergey.other@gmail.com',
+                                         jabber=u'unkvuzutop@khavr.com',
+                                         skype=u'unkvuzutop1',
+                                         date_of_birth=u'1999-08-08',
+                                         other_contacts=u'other contacts')
+
+        self.assertEqual(events_count + 1, self.events_row_count())
+        last_event = EventHistory.objects.last()
+        self.assertEqual(last_event.event, 'insert')
+        self.assertEqual(last_event.model, 'hello_profile')
+        self.assertEqual(last_event.related_id,
+                         self.get_last_object().id)
+
+        events_count = EventHistory.objects.count()
+        setattr(profile, 'name', 'changename')
+        profile.save()
+
+        self.assertEqual(events_count + 1, self.events_row_count())
+        last_event = self.get_last_event()
+        self.assertEqual(last_event.event, 'update')
+        self.assertEqual(last_event.model, 'hello_profile')
+        self.assertEqual(last_event.related_id,
+                         self.get_last_object().id)
+
+        events_count = EventHistory.objects.count()
+
+        last_object = self.get_last_object()
+        self.get_last_object().delete()
+
+        self.assertEqual(events_count + 1, self.events_row_count())
+        last_event = self.get_last_event()
+        self.assertEqual(last_event.event, 'delete')
+        self.assertEqual(last_event.model, 'hello_profile')
+        self.assertEqual(last_event.related_id,
+                         last_object.id)
