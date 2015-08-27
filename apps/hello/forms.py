@@ -13,9 +13,9 @@ class ReadOnlyFieldsMixin(object):
             field.required = False
 
     def clean(self):
-        cleaned_data = super(ReadOnlyFieldsMixin,self).clean()
+        cleaned_data = super(ReadOnlyFieldsMixin, self).clean()
         for field in self.readonly_fields:
-           cleaned_data[field] = getattr(self.instance, field)
+            cleaned_data[field] = getattr(self.instance, field)
 
         return cleaned_data
 
