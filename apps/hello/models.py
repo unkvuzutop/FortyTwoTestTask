@@ -1,7 +1,11 @@
 import StringIO
+import logging
 from PIL import Image as Img
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+
+logger = logging.getLogger(__name__)
 
 
 class Profile(models.Model):
@@ -74,3 +78,40 @@ class RequestHistory(models.Model):
             ip=self.ip,
             date=self.date.strftime('%Y-%m-%d %H:%M:%S'),
             is_viewed=self.is_viewed)
+
+
+class EventHistory(models.Model):
+    model = models.CharField(max_length=20,
+                             blank=True,
+                             null=False)
+    related_id = models.IntegerField()
+    event = models.CharField(max_length=10,
+                             blank=True,
+                             null=False)
+    date = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.model
+
+
+def my_handler(sender, **kwargs):
+    if sender._meta.app_label != 'hello':
+        return
+    if sender._meta.model_name == 'eventhistory':
+        return
+
+    history = EventHistory(related_id=kwargs['instance'].id,
+                           model=kwargs['instance']._meta.db_table)
+    if 'created' not in kwargs:
+        history.event = 'delete'
+    elif 'created' in kwargs and kwargs['created'] is False:
+        history.event = 'update'
+    elif 'created' in kwargs and kwargs['created'] is True:
+        history.event = 'insert'
+    history.save()
+    logger.info('add models event')
+    logger.debug('made event - {0} with model - {1}'.format(history.event,
+                                                            history.model))
+
+post_save.connect(my_handler)
+post_delete.connect(my_handler)

@@ -8,13 +8,31 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        from django.core.management import call_command
-        call_command("loaddata", "initial_data.json")
+        # Adding model 'EventHistory'
+        db.create_table(u'hello_eventhistory', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('model', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True)),
+            ('related_id', self.gf('django.db.models.fields.IntegerField')()),
+            ('event', self.gf('django.db.models.fields.CharField')(max_length=10, blank=True)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+        ))
+        db.send_create_signal(u'hello', ['EventHistory'])
+
 
     def backwards(self, orm):
-        pass
+        # Deleting model 'EventHistory'
+        db.delete_table(u'hello_eventhistory')
+
 
     models = {
+        u'hello.eventhistory': {
+            'Meta': {'object_name': 'EventHistory'},
+            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'event': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
+            'related_id': ('django.db.models.fields.IntegerField', [], {})
+        },
         u'hello.profile': {
             'Meta': {'object_name': 'Profile'},
             'bio': ('django.db.models.fields.TextField', [], {}),
@@ -25,8 +43,8 @@ class Migration(SchemaMigration):
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'other_contacts': ('django.db.models.fields.TextField', [], {}),
-            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'photo_preview': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True'}),
+            'photo_preview': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True'}),
             'skype': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30', 'blank': 'True'})
         },
         u'hello.requesthistory': {
