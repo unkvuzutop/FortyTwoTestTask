@@ -325,12 +325,13 @@ class EditPageTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        form_data.pop('email')
+        form_data.pop('name')
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
+        print(response.content)
         self.assertEqual(response.status_code, 400)
         self.assertIn('This field is required.', response.content)
-        self.assertIn('email', response.content)
+        self.assertIn('name', response.content)
 
         form_data['date_of_birth'] = '0000-00-00'
         response = self.client.post(reverse('hello:user_edit'),
