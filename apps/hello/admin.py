@@ -2,6 +2,7 @@ from django.contrib import admin
 from apps.hello.models import Profile, RequestHistory, EventHistory
 from south.models import MigrationHistory
 
+
 class UserAdmin(admin.ModelAdmin):
     list_display = ('name',
                     'last_name',
