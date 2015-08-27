@@ -20,18 +20,21 @@
                         <label class="label-form col-sm-4" for="name">{{ form.name.label}}:</label>
                         <div class="col-sm-7">
                             {{ form.name }}
+                            <div class=" col-lg-12 text-center status" id="error-name"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-4" for="last_name">{{ form.last_name.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.last_name }}
+                            <div class=" col-lg-12 text-center status" id="error-last_name"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-4" for="date_of_birth">{{ form.date_of_birth.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.date_of_birth }}
+                            <div class=" col-lg-12 text-center status" id="error-date_of_birth"></div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -39,6 +42,7 @@
                         <div class="col-sm-7 file-upload fileUpload">
                             {{ form.photo }}
                             <img id='photo-preview' src="{{ MEDIA_URL }}{{ form.photo_preview.value }}">
+                            <div class=" col-lg-12 text-center status" id="error-photo_preview"></div>
                         </div>
                     </div>
                 </div>
@@ -47,30 +51,35 @@
                         <label class="label-form col-sm-2" for="email">{{ form.email.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.email }}
+                            <div class=" col-lg-12 text-center status" id="error-email"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-2" for="jabber">{{ form.jabber.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.jabber }}
+                            <div class=" col-lg-12 text-center status" id="error-jabber"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-2" for="skype">{{ form.skype.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.skype }}
+                            <div class=" col-lg-12 text-center status" id="error-skype"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-2" for="other_contacts">{{ form.other_contacts.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.other_contacts }}
+                            <div class=" col-lg-12 text-center status" id="error-other_contacts"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="label-form col-sm-2" for="bio">{{ form.bio.label }}:</label>
                         <div class="col-sm-7">
                             {{ form.bio }}
+                            <div class=" col-lg-12 text-center status" id="error-bio"></div>
                         </div>
                     </div>
                 </div>
@@ -85,18 +94,13 @@
                     <div class="col-sm-1">
                         <div class="form-group">
                             <div class="col-sm-offset-6 col-sm-10">
-                                <button type='reset' id='cancel'   class="btn btn-danger">Cancel</button>
+                                <button type='reset' id='cancel' class="btn btn-danger">Cancel</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-    <div class="col-lg-1">
-        {% if user.is_authenticated %}
-            <input type="button" class="btn" id="edit-button" value="Edit" >
-        {% endif %}
     </div>
     <script src="{% static 'js/bootstrap.file-input.js' %}"></script>
     <script src="{% static 'hello/js/edit_form.js' %}"></script>
