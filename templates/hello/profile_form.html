@@ -104,11 +104,13 @@
             </div>
         </form>
     </div>
+
     {% if user.is_authenticated %}
         <div class="col-lg-1">
             {% admin_url form.instance %}
         </div>
     {% endif %}
+
     <script src="{% static 'js/bootstrap.file-input.js' %}"></script>
     <script src="{% static 'hello/js/edit_form.js' %}"></script>
     <script src="{% static 'hello/js/upload.js' %}"></script>
