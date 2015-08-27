@@ -2,8 +2,10 @@ $(':file').change(function(){
     var file = this.files[0];
     var type = file.type;
     //validation image types
+    var image_error = $('#error-photo_preview');
+    image_error.html('');
     if (CheckFileType(type) != true) {
-        $('#status').html("<span class='error'>We currently only support the following formats .jpg, .png, .bmp, .jpeg</span>");
+        image_error.html("<span class='error'>We currently only support the following formats .jpg, .png, .bmp, .jpeg</span>");
     }
     else {
         UploadPhoto();

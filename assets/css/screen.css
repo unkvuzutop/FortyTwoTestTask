@@ -30,14 +30,17 @@
 .error {
     color: red;
 }
+.error-input {
+ border:1px solid red;
+}
 #edit-button {
     display: block;
 }
 #submit {
-    display: none;
+    display: block;
 }
 #cancel {
-    display: none;
+    display: block;
 }
 
 #form-error {
