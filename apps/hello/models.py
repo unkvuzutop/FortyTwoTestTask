@@ -92,6 +92,8 @@ class EventHistory(models.Model):
 
 
 def my_handler(sender, **kwargs):
+    if sender._meta.app_label != 'hello':
+        return
     if sender._meta.model_name == 'eventhistory':
         return
 
