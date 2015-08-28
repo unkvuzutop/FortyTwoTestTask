@@ -16,7 +16,7 @@ from django.views.generic import UpdateView
 from apps.hello.forms import UserEditForm
 from apps.hello.models import Profile, RequestHistory
 from apps.hello.middleware import exclude_request_tracing
-from apps.hello.utils import get_unreaded_requests_count
+from apps.hello.utils import get_unread_requests_count
 
 from django.conf import settings
 
@@ -34,7 +34,8 @@ def request_list(request):
     latest_requests = RequestHistory.objects\
         .order_by('-date')[:10]
 
-    latest_requests_count = get_unreaded_requests_count(latest_requests)
+    latest_requests_count = \
+        get_unread_requests_count(latest_requests.values_list('id'))
 
     return render_to_response('hello/requests.html',
                               {'latest_requests': latest_requests,
@@ -107,7 +108,7 @@ def ajax_count(request):
             .order_by('-date')[:10]
 
         data = {'requests': [ob.as_json() for ob in requests],
-                'count': get_unreaded_requests_count(requests)}
+                'count': get_unread_requests_count(requests.values_list('id'))}
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponse(json.dumps({'response': 'False'}),
                         content_type='application/json')
