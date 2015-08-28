@@ -479,7 +479,8 @@ class TemplateTagTest(TestCase):
         tag_template = self.render_template(
             '{% load admin_tags %}{% admin_url user %}',
             context={'user': ''})
-        self.assertEqual(tag_template, '')
+        self.assertEqual(tag_template, 'Something wrong when '
+                                       'trying to get admin_url')
 
 
 class DjangoCommandTest(TestCase):
@@ -518,21 +519,23 @@ class SignalsTest(TestCase):
     def get_last_event(self):
         return EventHistory.objects.latest('id')
 
+    def create_db_row(self):
+        self.profile = Profile.objects.create(name=u'Сергій',
+                                              last_name=u'Благун',
+                                              bio=u'інша біографія',
+                                              email=u'sergey.other@gmail.com',
+                                              jabber=u'unkvuzutop@khavr.com',
+                                              skype=u'unkvuzutop1',
+                                              date_of_birth=u'1999-08-08',
+                                              other_contacts=u'other contacts')
+
     def test_create_signal(self):
         """
-        1) Check EventHistory after create model
-        2) Check EventHistory after update model
-        3) Check EventHistory after delete model
+        Check EventHistory after create model
         """
         events_count = EventHistory.objects.count()
-        profile = Profile.objects.create(name=u'Сергій',
-                                         last_name=u'Благун',
-                                         bio=u'інша біографія',
-                                         email=u'sergey.other@gmail.com',
-                                         jabber=u'unkvuzutop@khavr.com',
-                                         skype=u'unkvuzutop1',
-                                         date_of_birth=u'1999-08-08',
-                                         other_contacts=u'other contacts')
+
+        self.create_db_row()
 
         self.assertEqual(events_count + 1, self.events_row_count())
         last_event = EventHistory.objects.last()
@@ -541,9 +544,16 @@ class SignalsTest(TestCase):
         self.assertEqual(last_event.related_id,
                          self.get_last_object().id)
 
+    def test_update_signal(self):
+        """
+        Check EventHistory after update model
+
+        """
+        self.create_db_row()
         events_count = EventHistory.objects.count()
-        setattr(profile, 'name', 'changename')
-        profile.save()
+
+        setattr(self.profile, 'name', 'changename')
+        self.profile.save()
 
         self.assertEqual(events_count + 1, self.events_row_count())
         last_event = self.get_last_event()
@@ -552,6 +562,11 @@ class SignalsTest(TestCase):
         self.assertEqual(last_event.related_id,
                          self.get_last_object().id)
 
+    def test_delete_signal(self):
+        """
+        Check EventHistory after delete model
+        """
+        self.create_db_row()
         events_count = EventHistory.objects.count()
 
         last_object = self.get_last_object()

@@ -1,7 +1,6 @@
 {% extends 'hello/base.html' %}
 
 {% load staticfiles %}
-{% load admin_tags %}
 
 {% block extra_head %}
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -86,7 +85,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-1 col-sm-offset-1">
+                    <div class="col-sm-1">
                         <div class="form-group">
                             <div class="col-sm-offset-5">
                                 <button type="submit" class="btn btn-success" id="submit">Submit</button>
@@ -104,11 +103,6 @@
             </div>
         </form>
     </div>
-    {% if user.is_authenticated %}
-        <div class="col-lg-1">
-            {% admin_url form.instance %}
-        </div>
-    {% endif %}
     <script src="{% static 'js/bootstrap.file-input.js' %}"></script>
     <script src="{% static 'hello/js/edit_form.js' %}"></script>
     <script src="{% static 'hello/js/upload.js' %}"></script>

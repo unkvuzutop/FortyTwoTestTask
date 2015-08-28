@@ -1,8 +1,10 @@
 {% extends 'hello/base.html' %}
 
+{% load admin_tags %}
+
 {% block content %}
         <div class="row main-text">
-            <div class="col-lg-5">
+            <div class="col-lg-5 col">
                 <ul class="list-unstyled">
                         <li class="row info-row">
                             <div class="col-md-5"><strong>Name</strong></div>
@@ -24,7 +26,7 @@
                         </li>
                 </ul>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-lg-pull-1">
                 <p class="main-text"><strong>Contacts:</strong></p>
                 <ul class="list-unstyled">
                     <li class="row info-row">
@@ -51,11 +53,12 @@
             </div>
             <div class="col-sm-1">
                 {% if user.is_authenticated %}
-                    <div class="nav on-page> col-sm-1">
+                    <div class="col-sm-1 col-lg-pull-5">
                         <a href="{% url 'hello:user_edit'%}">Edit</a>
                     </div>
+                        {% admin_url person %}
                 {% else %}
-                    <div class="nav on-page> col-sm-1">
+                    <div class="col-sm-1">
                         <a href="{% url 'hello:login' %}">Login</a>
                     </div>
                 {% endif %}
