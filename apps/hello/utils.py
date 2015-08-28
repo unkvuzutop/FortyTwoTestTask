@@ -1,6 +1,9 @@
-def get_unreaded_requests_count(requests):
-    latest_requests_count = 0
-    for request in requests:
-        if not request.is_viewed:
-            latest_requests_count += 1
+from apps.hello.models import RequestHistory
+
+
+def get_unread_requests_count(request_ids):
+    latest_requests_count = RequestHistory.objects\
+        .filter(id__in=request_ids)\
+        .filter(is_viewed=False)\
+        .count()
     return latest_requests_count
