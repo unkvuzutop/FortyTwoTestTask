@@ -37,10 +37,22 @@ $(window).on('focus blur', function () {
     });
 });
 
+// get url parameter by name
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+console.log(getParameterByName('order'));
 function getNewRequests() {
+    var url = '/api/v1/count';
+    var order = getParameterByName('order');
+    if (order) {
+        url = url + '?order=' + order;
+    }
+
     $.ajax({
         dataType: "json",
-        url: '/api/v1/count',
+        url: url,
         method: 'POST',
         data: {},
         success: function(response) {
@@ -69,16 +81,21 @@ function renderResponse(response) {
             unreaded = 'unreaded'
         }
         var tableRow = '';
+
         tableRow += '<tr class="request  '+unreaded+'" id="request_'+ requestObj.id + '" data-id="' + requestObj.id + '">';
         tableRow += '<td>'+requestObj.method+'</td>';
         tableRow += '<td>' + requestObj.path + '</td>';
         tableRow += '<td>'+ requestObj.date + '</td>';
         tableRow += '<td>' + requestObj.ip + '</td>';
         tableRow += '<td>' + requestObj.host + '</td>';
-        tableRow += '<td><div class="col-xs-8 selectContainer">';
+        tableRow += '<td class="priority"><div class="col-xs-8 selectContainer">';
         tableRow += '<select name="priority" class="form-control priority" id="priority" data-request-id="' + requestObj.id + '">';
-        tableRow += '<option value="0" selected>Casual</option>';
-        tableRow += '<option value="1">Important</option>';
+        tableRow += '<option value="0" ';
+        if (requestObj.priority == 0) {tableRow += 'selected';}
+        tableRow += '>Casual</option>';
+        tableRow += '<option value="1" ';
+        if (requestObj.priority == 1) {tableRow += 'selected';}
+        tableRow += '>Important</option>';
         tableRow += '</select></div></td>';
         $('#requests-table > tbody').append(tableRow);
     });

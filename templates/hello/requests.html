@@ -49,7 +49,7 @@
                             <td>
                                 {{ request.host }}
                             </td>
-                            <td>
+                            <td class="priority">
                                 <div class="col-xs-9 selectContainer">
                                     <select name="priority" class="form-control priority" id="priority" data-request-id="{{ request.id }}">
                                         <option value="0" {% if request.priority == 0 %}selected{% endif %}>Casual</option>

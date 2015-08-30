@@ -80,7 +80,8 @@ class RequestHistory(models.Model):
             method=self.method,
             ip=self.ip,
             date=self.date.strftime('%Y-%m-%d %H:%M:%S'),
-            is_viewed=self.is_viewed)
+            is_viewed=self.is_viewed,
+            priority=self.priority)
 
 
 class EventHistory(models.Model):

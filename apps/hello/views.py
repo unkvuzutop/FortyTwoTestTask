@@ -35,8 +35,9 @@ def request_list(request):
     allowed_ordering = ['priority']
     if 'order' in request.GET and request.GET['order'] in allowed_ordering:
         args.append('-'+request.GET['order'])
-
+    args = reversed(args)
     latest_requests = RequestHistory.objects\
+        .order_by(*args)[:10]
 
     latest_requests_count = \
         get_unread_requests_count(latest_requests.values_list('id'))
@@ -108,8 +109,12 @@ def ajax_update(request):
 @exclude_request_tracing
 def ajax_count(request):
     if request.is_ajax():
-        requests = RequestHistory.objects\
-            .order_by('-date')[:10]
+        args = ['-date']
+        allowed_ordering = ['priority']
+        if 'order' in request.GET and request.GET['order'] in allowed_ordering:
+            args.append('-'+request.GET['order'])
+        args = reversed(args)
+        requests = RequestHistory.objects.order_by(*args)[:10]
 
         data = {'requests': [ob.as_json() for ob in requests],
                 'count': get_unread_requests_count(requests.values_list('id'))}
@@ -119,16 +124,22 @@ def ajax_count(request):
 
 
 def ajax_update_priority(request):
-    if request.is_ajax() \
+    if request.is_ajax()\
             and 'priority' in request.POST\
             and 'request_id' in request.POST:
-
-            try:
-                RequestHistory.objects\
-                    .filter(id=request.POST['request_id'])\
-                    .update(priority=request.POST['priority'])
-            except Exception as e:
-                print(e)
+        try:
+            result = RequestHistory.objects\
+                .filter(id=request.POST['request_id'])\
+                .update(priority=request.POST['priority'])
+        except Exception as e:
+            logging.info('can\'t update object')
+            logger.error(e)
+            return HttpResponse(json.dumps({'response': False}))
+        if result:
             return HttpResponse(json.dumps({'response': 'OK'}),
+                                content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({'response':
+                                            'Nothing to update'}),
                                 content_type='application/json')
     return HttpResponse(json.dumps({'response': False}))
