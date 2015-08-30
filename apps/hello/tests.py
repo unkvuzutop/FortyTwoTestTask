@@ -328,6 +328,7 @@ class RequestsPageTests(TestCase):
         and check object is_viewed state before and after request
         - check response if request with not real object ID
         """
+        test_request = self.client.get(reverse('hello:home'))
         response = self.client.get(reverse('hello:ajax_update_priority'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, json.dumps({'response': False}))

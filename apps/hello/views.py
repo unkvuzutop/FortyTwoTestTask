@@ -122,6 +122,7 @@ def ajax_count(request):
     return HttpResponse(json.dumps({'response': False}),
                         content_type='application/json')
 
+
 @exclude_request_tracing
 def ajax_update_priority(request):
     if request.is_ajax()\
