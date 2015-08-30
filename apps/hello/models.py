@@ -65,6 +65,9 @@ class RequestHistory(models.Model):
     ip = models.GenericIPAddressField()
     date = models.DateTimeField(auto_now_add=True)
     is_viewed = models.BooleanField(default=False)
+    priority = models.PositiveSmallIntegerField(default=0,
+                                                null=False,
+                                                blank=False)
 
     def __unicode__(self):
         return self.path
@@ -77,7 +80,8 @@ class RequestHistory(models.Model):
             method=self.method,
             ip=self.ip,
             date=self.date.strftime('%Y-%m-%d %H:%M:%S'),
-            is_viewed=self.is_viewed)
+            is_viewed=self.is_viewed,
+            priority=self.priority)
 
 
 class EventHistory(models.Model):
