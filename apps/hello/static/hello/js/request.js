@@ -75,6 +75,11 @@ function renderResponse(response) {
         tableRow += '<td>'+ requestObj.date + '</td>';
         tableRow += '<td>' + requestObj.ip + '</td>';
         tableRow += '<td>' + requestObj.host + '</td>';
+        tableRow += '<td><div class="col-xs-8 selectContainer">';
+        tableRow += '<select name="priority" class="form-control priority" id="priority" data-request-id="' + requestObj.id + '">';
+        tableRow += '<option value="0" selected>Casual</option>';
+        tableRow += '<option value="1">Important</option>';
+        tableRow += '</select></div></td>';
         $('#requests-table > tbody').append(tableRow);
     });
 

@@ -31,8 +31,12 @@ def user_detail(request):
 
 
 def request_list(request):
+    args = ['-date']
+    allowed_ordering = ['priority']
+    if 'order' in request.GET and request.GET['order'] in allowed_ordering:
+        args.append('-'+request.GET['order'])
+
     latest_requests = RequestHistory.objects\
-        .order_by('-date')[:10]
 
     latest_requests_count = \
         get_unread_requests_count(latest_requests.values_list('id'))
@@ -86,7 +90,7 @@ def ajax_update(request):
         except Exception as e:
             logging.info('can\'t update object')
             logging.error(e)
-            return HttpResponse(json.dumps({'response': 'False'}),
+            return HttpResponse(json.dumps({'response': False}),
                                 content_type='application/json')
 
         if result:
@@ -96,7 +100,7 @@ def ajax_update(request):
             return HttpResponse(json.dumps({'response':
                                             'Nothing to update'}),
                                 content_type='application/json')
-    return HttpResponse(json.dumps({'response': 'False'}),
+    return HttpResponse(json.dumps({'response': False}),
                         content_type='application/json')
 
 
@@ -110,5 +114,21 @@ def ajax_count(request):
         data = {'requests': [ob.as_json() for ob in requests],
                 'count': get_unread_requests_count(requests.values_list('id'))}
         return HttpResponse(json.dumps(data), content_type='application/json')
-    return HttpResponse(json.dumps({'response': 'False'}),
+    return HttpResponse(json.dumps({'response': False}),
                         content_type='application/json')
+
+
+def ajax_update_priority(request):
+    if request.is_ajax() \
+            and 'priority' in request.POST\
+            and 'request_id' in request.POST:
+
+            try:
+                RequestHistory.objects\
+                    .filter(id=request.POST['request_id'])\
+                    .update(priority=request.POST['priority'])
+            except Exception as e:
+                print(e)
+            return HttpResponse(json.dumps({'response': 'OK'}),
+                                content_type='application/json')
+    return HttpResponse(json.dumps({'response': False}))

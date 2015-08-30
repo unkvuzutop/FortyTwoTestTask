@@ -201,7 +201,7 @@ class RequestsPageTests(TestCase):
         self.assertEqual(test_request.is_viewed, True)
 
         response = self.client.get(reverse('hello:ajax_update'))
-        self.assertEqual(response.content, json.dumps({'response': 'False'}))
+        self.assertEqual(response.content, json.dumps({'response': False}))
 
     def test_ajax_count_view(self):
         """
@@ -241,7 +241,7 @@ class RequestsPageTests(TestCase):
 
         response = self.client.get(reverse('hello:ajax_count'))
 
-        self.assertEqual(response.content, json.dumps({'response': 'False'}))
+        self.assertEqual(response.content, json.dumps({'response': False}))
 
     def test_ten_latest_requests_on_page(self):
         """
@@ -251,10 +251,9 @@ class RequestsPageTests(TestCase):
                 on the page
         """
         self.client.get(reverse('hello:home'))
-        for request in range(1, 10):
+        for request in range(0, 11):
             self.client.get(reverse('hello:requests'))
         response = self.client.get(reverse('hello:requests'))
-
         for request in response.context['latest_requests']:
             self.assertEqual(reverse('hello:requests'), request.path)
         self.assertIn(reverse('hello:requests'), response.content)
@@ -274,6 +273,97 @@ class RequestsPageTests(TestCase):
 
         for request in response_data['requests']:
             self.assertEqual(reverse('hello:requests'), request['path'])
+
+    def test_ordering(self):
+        """
+        test requests page if set not valid url params
+        test requests page if set not valid ordering value
+        check right order showed data on the template context
+            and check showed data
+        """
+        self.client.get('/test/request')
+        not_valid_params = {'test_params': 'priority', 'order': 'some_order'}
+        response = ''
+        for key, value in not_valid_params.items():
+            response = self.client.get('{0}?{1}={2}'
+                                       .format(reverse('hello:requests'),
+                                               key,
+                                               value))
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('42 Coffee Cups Test Assignment', response.content)
+            self.assertIn('GET', response.content)
+            self.assertIn('127.0.0.1', response.content)
+            self.assertIn('Host', response.content)
+            self.assertIn('IP', response.content)
+            self.assertIn('priority', response.content)
+        showed_requests = response.context['latest_requests']
+        self.assertEqual(showed_requests[0].priority, 0)
+        self.assertEqual(showed_requests[1].priority, 0)
+
+        RequestHistory.objects.filter(id=1).update(priority=1)
+
+        response = self.client.get('{0}?{1}={2}'
+                                   .format(reverse('hello:requests'),
+                                           'order',
+                                           'priority'))
+
+        showed_requests = response.context['latest_requests']
+
+        self.assertEqual(showed_requests[0].priority, 1)
+        self.assertEqual(showed_requests[1].priority, 0)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('42 Coffee Cups Test Assignment', response.content)
+        self.assertIn('GET', response.content)
+        self.assertIn('127.0.0.1', response.content)
+        self.assertIn('Host', response.content)
+        self.assertIn('IP', response.content)
+        self.assertIn('priority', response.content)
+
+    def test_ajax_update_priority(self):
+        """
+        check update ajax request:
+        - check response with not ajax request
+        - check response if request with real object ID
+        and check object is_viewed state before and after request
+        - check response if request with not real object ID
+        """
+        response = self.client.get(reverse('hello:ajax_update_priority'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, json.dumps({'response': False}))
+
+        test_request = RequestHistory.objects.latest('id')
+
+        self.assertEqual(test_request.priority, 0)
+
+        response = self.client.post(reverse('hello:ajax_update_priority'),
+                                    {'request_id': test_request.id,
+                                     'priority': 1},
+                                    **self.kwargs)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content,
+                         json.dumps({'response': 'OK'}))
+
+        check_test_request = RequestHistory.objects.get(id=test_request.id)
+        self.assertEqual(check_test_request.priority, 1)
+
+        latest_response = RequestHistory.objects.latest('id')
+
+        response = self.client.post(reverse('hello:ajax_update_priority'),
+                                    {'request_id': int(latest_response.id)+10,
+                                     'priority': 1},
+                                    **self.kwargs)
+        self.assertEqual(response.content,
+                         json.dumps({'response': 'Nothing to update'}))
+
+    def test_priority_selector_on_page(self):
+        """
+        check priority selector on the requests page
+        """
+        response = self.client.get(reverse('hello:requests'))
+        self.assertIn('<td class="priority">', response.content)
+        self.assertIn('select name="priority"', response.content)
 
 
 class EditPageTests(TestCase):
@@ -336,7 +426,7 @@ class EditPageTests(TestCase):
         form_data.pop('name')
         response = self.client.post(reverse('hello:user_edit'),
                                     form_data, **self.kwargs)
-        print(response.content)
+
         self.assertEqual(response.status_code, 400)
 
         self.assertIn('This field is required.', response.content)
